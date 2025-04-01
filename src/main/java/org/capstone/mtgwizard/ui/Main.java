@@ -1,8 +1,16 @@
 package org.capstone.mtgwizard.ui;
 
+import org.capstone.mtgwizard.dataobjects.Card;
+import org.capstone.mtgwizard.ui.ProgramFonts;
+
 import javax.swing.*;
 
+
+
 public class Main {
+
+    static Card testCard;
+
     public static void main(String[] args) {
         new Main();
     }
@@ -31,6 +39,9 @@ public class Main {
 
         // Setting window as visible
         window.setVisible(true);
+
+        testCard = new Card("Epic Card", 5.99f, "5BB", "Return all nonland permanents " +
+                "to their owner's hands.", "Ravnica", "Sorcery");
 
     }
 }

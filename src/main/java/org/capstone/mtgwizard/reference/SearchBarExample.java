@@ -1,4 +1,4 @@
-package org.capstone.mtgwizard.ui;
+package org.capstone.mtgwizard.reference;
 
 import javax.swing.*;
 import java.awt.*;
