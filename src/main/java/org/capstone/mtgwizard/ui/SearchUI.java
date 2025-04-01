@@ -24,7 +24,6 @@ public class SearchUI extends JPanel {
     public SearchUI() {
 
         // Intializing layout of tab
-        //setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setLayout(new BorderLayout());
 
         // Initializing search tab with search prompt
@@ -81,29 +80,10 @@ public class SearchUI extends JPanel {
 
         //resultBox.removeAll();
 
-        for (Card c : cardsFound) {
-            JPanel resultPane = new JPanel();
-            resultPane.setBorder(BorderFactory.createLineBorder(Color.black));
-            //resultPane.setLayout(new BoxLayout(resultPane, BoxLayout.Y_AXIS));
+        for (Card card : cardsFound) {
 
-            resultPane.setLayout(new GridBagLayout());
-            GridBagConstraints cons = new GridBagConstraints();
-            cons.fill = GridBagConstraints.HORIZONTAL;
-            cons.weightx = 1;
-            cons.gridx = 0;
-
-            JLabel nameLabel = new JLabel(c.getName());
-            nameLabel.setFont(boldMediumFont);
-            nameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-            JLabel setLabel = new JLabel(c.getSet());
-            setLabel.setFont(mediumFont);
-            setLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-            resultPane.add(nameLabel, cons);
-            resultPane.add(setLabel, cons);
-
-            resultBox.add(resultPane);
+            SearchResultPanel resultPanel = new SearchResultPanel(card);
+            resultBox.add(resultPanel);
 
         }
 
