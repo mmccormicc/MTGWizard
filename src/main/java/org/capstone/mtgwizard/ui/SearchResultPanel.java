@@ -4,32 +4,57 @@ import org.capstone.mtgwizard.dataobjects.Card;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import static org.capstone.mtgwizard.ui.ProgramFonts.boldMediumFont;
 import static org.capstone.mtgwizard.ui.ProgramFonts.mediumFont;
 
 public class SearchResultPanel extends JPanel {
 
-    SearchResultPanel(Card card) {
+    // Holds card that panel represents
+    Card card;
+    SearchUI searchUI;
+
+    SearchResultPanel(Card card, SearchUI searchUI) {
+
+        this.card = card;
+        this.searchUI = searchUI;
+
         setBorder(BorderFactory.createLineBorder(Color.black));
         //resultPane.setLayout(new BoxLayout(resultPane, BoxLayout.Y_AXIS));
 
+        // Setting layout
         setLayout(new GridBagLayout());
+        // Creating constraints that make panel fill out window horizontally
         GridBagConstraints cons = new GridBagConstraints();
         cons.fill = GridBagConstraints.HORIZONTAL;
         cons.weightx = 1;
         cons.gridx = 0;
 
+        // Creating label for card name
         JLabel nameLabel = new JLabel(card.getName());
         nameLabel.setFont(boldMediumFont);
-        nameLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
+        // Creating label for card set
         JLabel setLabel = new JLabel(card.getSet());
         setLabel.setFont(mediumFont);
-        setLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
+        // Adding labels to panel
         add(nameLabel, cons);
         add(setLabel, cons);
+
+        // Mouse listener for when panel is clicked on
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                //SearchUI.remove();
+                //SearchUI.updateUI();
+                searchUI.displayCardInfo(card);
+                System.out.println(card.getName());
+            }
+        });
     }
 
 }

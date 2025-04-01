@@ -4,7 +4,7 @@ import org.capstone.mtgwizard.dataobjects.Card;
 import org.capstone.mtgwizard.ui.ProgramFonts;
 
 import javax.swing.*;
-
+import java.awt.*;
 
 
 public class Main {
@@ -23,6 +23,8 @@ public class Main {
         // Setting default size
         window.setSize(800, 600);
         window.setTitle("MTG Wizard");
+
+        window.getContentPane().setBackground(Color.BLACK);
 
         // Initializing search tab
         SearchUI searchUI = new SearchUI();

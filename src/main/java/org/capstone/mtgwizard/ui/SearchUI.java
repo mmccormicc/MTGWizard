@@ -4,10 +4,7 @@ import org.capstone.mtgwizard.dataobjects.Card;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 import static org.capstone.mtgwizard.ui.ProgramFonts.boldMediumFont;
@@ -18,10 +15,17 @@ public class SearchUI extends JPanel {
     private JTextField searchField;
     private JButton searchButton;
     private Box resultBox;
-    private JScrollPane resultPane;
+    private JScrollPane resultPanel;
+    private JPanel cardPanel;
     private ArrayList<Card> cardsFound;
 
+    public Card testCard;
+
     public SearchUI() {
+
+        testCard = new Card("Epic Card", 5.99f, "5BB", "Return all nonland permanents " +
+                "to their owner's hands.", "Ravnica", "Sorcery");
+
 
         // Intializing layout of tab
         setLayout(new BorderLayout());
@@ -58,37 +62,55 @@ public class SearchUI extends JPanel {
 
         // Initializing top search panel that holds search bar and search button
         JPanel searchPanel = new JPanel(new FlowLayout());
+        searchPanel.setBackground(Color.BLACK);
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
 
+        // Initializing box that holds search results
         resultBox = Box.createVerticalBox();
-        resultPane = new JScrollPane(resultBox);
+        // Initializing scrollable pane of search results
+        resultPanel = new JScrollPane(resultBox);
+        
+        cardPanel = new CardPanel(testCard);
 
+        // Adding search and result panels with border layout constraints
         add(searchPanel, BorderLayout.NORTH);
-        add(resultPane, BorderLayout.CENTER);
+        add(resultPanel, BorderLayout.CENTER);
 
-        setVisible(true);
-
+        // Initializing arraylist that holds cards found by search
         cardsFound = new ArrayList<>();
 
+        // Test cards
         cardsFound.add(new Card("Epic Card", 5.99f, "5BB", "Return all nonland permanents " +
+                "to their owner's hands.", "Ravnica", "Sorcery"));
+
+        cardsFound.add(new Card("Lame Card", 5.99f, "5BB", "Return all nonland permanents " +
                 "to their owner's hands.", "Ravnica", "Sorcery"));
     }
 
     public void performSearch() {
+        // Resetting search bar text
         searchField.setText("Search for a card");
 
-        //resultBox.removeAll();
-
+        // Adds cards to scrollable pane for each card found
         for (Card card : cardsFound) {
 
-            SearchResultPanel resultPanel = new SearchResultPanel(card);
+            // Creating new search panel entry
+            SearchResultPanel resultPanel = new SearchResultPanel(card, this);
+            // Adding entry to search result box
             resultBox.add(resultPanel);
 
         }
 
-        resultPane.updateUI();
+        // Updating scrollable pane
+        resultPanel.updateUI();
 
+    }
+    
+    public void displayCardInfo(Card card) {
+        remove(resultPanel);
+        add(cardPanel);
+        updateUI();
     }
 
 }
