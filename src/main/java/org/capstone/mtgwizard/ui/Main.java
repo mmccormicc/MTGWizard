@@ -42,7 +42,7 @@ public class Main {
         // Setting window as visible
         window.setVisible(true);
 
-        testCard = new Card("Epic Card", 5.99f, "5BB", "Return all nonland permanents " +
+        testCard = new Card("Epic Card", 5.99f, 6.99f, "5BB", "Return all nonland permanents " +
                 "to their owner's hands.", "Ravnica", "Sorcery");
 
     }

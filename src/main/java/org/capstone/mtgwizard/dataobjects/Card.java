@@ -2,16 +2,18 @@ package org.capstone.mtgwizard.dataobjects;
 
 public class Card {
 
+    private float cardKingdomPrice;
     private String name;
-    private float price;
+    private float tcgPlayerPrice;
     private String manaCost;
     private String rulesText;
     private String set;
     private String type;
 
-    public Card(String name, float price, String manaCost, String rulesText, String set, String type) {
+    public Card(String name, float cardKingdomprice, float TCGPlayerprice, String manaCost, String rulesText, String set, String type) {
         this.name = name;
-        this.price = price;
+        this.cardKingdomPrice = cardKingdomprice;
+        this.tcgPlayerPrice = TCGPlayerprice;
         this.manaCost = manaCost;
         this.rulesText = rulesText;
         this.set = set;
@@ -26,13 +28,22 @@ public class Card {
         this.name = name;
     }
 
-    public float getPrice() {
-        return price;
+    public float getCardKingdomPrice() {
+        return cardKingdomPrice;
     }
 
-    public void setPrice(float price) {
-        this.price = price;
+    public void setCardKingdomPrice(float TCGPlayerprice) {
+        this.cardKingdomPrice = TCGPlayerprice;
     }
+
+    public float getTCGPlayerPrice() {
+        return tcgPlayerPrice;
+    }
+
+    public void setTCGPlayerPrice(float TCGPlayerPrice) {
+        this.tcgPlayerPrice = TCGPlayerPrice;
+    }
+
 
     public String getManaCost() {
         return manaCost;

@@ -16,14 +16,16 @@ public class SearchUI extends JPanel {
     private JButton searchButton;
     private Box resultBox;
     private JScrollPane resultPanel;
-    private JPanel cardPanel;
+    private CardPanel cardPanel;
     private ArrayList<Card> cardsFound;
 
     public Card testCard;
 
+    private Boolean showingCard = false;
+
     public SearchUI() {
 
-        testCard = new Card("Epic Card", 5.99f, "5BB", "Return all nonland permanents " +
+        testCard = new Card("Epic Card", 5.99f, 6.99f, "5BB", "Return all nonland permanents " +
                 "to their owner's hands.", "Ravnica", "Sorcery");
 
 
@@ -71,7 +73,7 @@ public class SearchUI extends JPanel {
         // Initializing scrollable pane of search results
         resultPanel = new JScrollPane(resultBox);
         
-        cardPanel = new CardPanel(testCard);
+        cardPanel = new CardPanel();
 
         // Adding search and result panels with border layout constraints
         add(searchPanel, BorderLayout.NORTH);
@@ -81,16 +83,23 @@ public class SearchUI extends JPanel {
         cardsFound = new ArrayList<>();
 
         // Test cards
-        cardsFound.add(new Card("Epic Card", 5.99f, "5BB", "Return all nonland permanents " +
+        cardsFound.add(new Card("Epic Card", 5.99f, 6.99f,"5BB", "Return all nonland permanents " +
                 "to their owner's hands.", "Ravnica", "Sorcery"));
 
-        cardsFound.add(new Card("Lame Card", 5.99f, "5BB", "Return all nonland permanents " +
+        cardsFound.add(new Card("Lame Card", 5.99f, 6.99f,"5BB", "Return all nonland permanents \n " +
                 "to their owner's hands.", "Ravnica", "Sorcery"));
     }
 
     public void performSearch() {
         // Resetting search bar text
         searchField.setText("Search for a card");
+
+        // Switching from card panel to results panel
+        if (showingCard) {
+            remove(cardPanel);
+            add(resultPanel);
+            showingCard = false;
+        }
 
         // Adds cards to scrollable pane for each card found
         for (Card card : cardsFound) {
@@ -106,10 +115,13 @@ public class SearchUI extends JPanel {
         resultPanel.updateUI();
 
     }
-    
+
+    // Switching from result panel to card panel
     public void displayCardInfo(Card card) {
         remove(resultPanel);
+        cardPanel.setCard(card);
         add(cardPanel);
+        showingCard = true;
         updateUI();
     }
 
