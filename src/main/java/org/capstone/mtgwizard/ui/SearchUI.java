@@ -14,6 +14,7 @@ public class SearchUI extends JPanel {
 
     private JTextField searchField;
     private JButton searchButton;
+
     private Box resultBox;
     private JScrollPane resultPanel;
     private CardPanel cardPanel;
@@ -24,9 +25,6 @@ public class SearchUI extends JPanel {
     private Boolean showingCard = false;
 
     public SearchUI() {
-
-        testCard = new Card("Epic Card", 5.99f, 6.99f, "5BB", "Return all nonland permanents " +
-                "to their owner's hands.", "Ravnica", "Sorcery");
 
 
         // Intializing layout of tab
@@ -72,12 +70,13 @@ public class SearchUI extends JPanel {
         resultBox = Box.createVerticalBox();
         // Initializing scrollable pane of search results
         resultPanel = new JScrollPane(resultBox);
-        
-        cardPanel = new CardPanel();
 
         // Adding search and result panels with border layout constraints
         add(searchPanel, BorderLayout.NORTH);
         add(resultPanel, BorderLayout.CENTER);
+
+        // Creating card panel that will hold card info, initially not shown
+        cardPanel = new CardPanel();
 
         // Initializing arraylist that holds cards found by search
         cardsFound = new ArrayList<>();
