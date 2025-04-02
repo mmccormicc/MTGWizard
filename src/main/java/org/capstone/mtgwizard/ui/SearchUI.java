@@ -82,10 +82,10 @@ public class SearchUI extends JPanel {
         cardsFound = new ArrayList<>();
 
         // Test cards
-        cardsFound.add(new Card("Epic Card", 5.99f, 6.99f,"5BB", "Return all nonland permanents " +
+        cardsFound.add(new Card("Epic Card", 5.99f, 6.99f,"5EE", "Return all nonland permanents " +
                 "to their owner's hands.", "Ravnica", "Sorcery"));
 
-        cardsFound.add(new Card("Lame Card", 5.99f, 6.99f,"5BB", "Return all nonland permanents \n " +
+        cardsFound.add(new Card("Lame Card", 5.99f, 6.99f,"5WUBRG", "Return all nonland permanents \n " +
                 "to their owner's hands.", "Ravnica", "Sorcery"));
     }
 

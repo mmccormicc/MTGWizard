@@ -2,11 +2,10 @@ package org.capstone.mtgwizard.ui;
 
 import org.capstone.mtgwizard.dataobjects.Card;
 
-import static org.capstone.mtgwizard.ui.ProgramFonts.boldMediumFont;
-import static org.capstone.mtgwizard.ui.ProgramFonts.mediumFont;
-
 import javax.swing.*;
 import java.awt.*;
+
+import static org.capstone.mtgwizard.ui.ProgramFonts.*;
 
 public class CardPanel extends JPanel {
 
@@ -19,6 +18,8 @@ public class CardPanel extends JPanel {
     JLabel cardKingdomPriceLabel;
     JButton addToInventoryButton;
     JButton removeFromInventoryButton;
+    JPanel manaCostPanel;
+    JLabel costLabel;
 
     CardPanel() {
 
@@ -66,12 +67,8 @@ public class CardPanel extends JPanel {
         constraints.gridy = 3;
         add(rulesTextArea, constraints);
 
-        // Testing card cost in middle
-        JLabel testCost = new JLabel("R");
-        testCost.setFont(mediumFont);
-        constraints.gridx = 1;
-        constraints.gridy = 0;
-        add(testCost, constraints);
+        // 104 x 104
+
 
         // RIGHT SIDE COMPONENTS
 
@@ -82,11 +79,17 @@ public class CardPanel extends JPanel {
         constraints.gridy = 0;
         add(setLabel, constraints);
 
-        // Separator between add to inventory and remove form inventory buttons
+        // Initializing mana cost label
+        costLabel = new JLabel("Mana Cost: ");
+        costLabel.setFont(mediumFont);
+
+        // Mana cost
+        manaCostPanel = new JPanel();
+        manaCostPanel.setLayout(new FlowLayout());
         constraints.gridx = 2;
         constraints.gridy = 1;
-        JSeparator separator2 = new JSeparator();
-        add(separator2, constraints);
+        add(manaCostPanel, constraints);
+
 
         // Card price from TCGplayer
         tcgPriceLabel = new JLabel();
@@ -139,5 +142,46 @@ public class CardPanel extends JPanel {
         setLabel.setText("Set: " + card.getSet());
         tcgPriceLabel.setText("TCGplayer Price: $" + Float.toString(card.getTCGPlayerPrice()));
         cardKingdomPriceLabel.setText("Card Kingdom Price: $" + Float.toString(card.getCardKingdomPrice()));
+
+        // Updating mana cost panel
+        manaCostPanel.removeAll();
+        manaCostPanel.add(costLabel);
+
+        // Getting mana cost from card and storing it
+        String manaCost = card.getManaCost();
+        // For each character in mana cost
+        for (int i = 0; i < manaCost.length(); i++) {
+            // If char is an integer
+            if(Character.isDigit(manaCost.charAt(i))) {
+                // Creating label with cost int and adding to manaCost
+                JLabel numberLabel = new JLabel(String.valueOf(manaCost.charAt(i)));
+                numberLabel.setFont(boldLargeFont);
+                manaCostPanel.add(numberLabel);
+            } else {
+                // If char is not an integer
+                String imageName = "ErrorIcon.png";
+                switch (manaCost.charAt(i)) {
+                    case 'W':
+                        imageName = "WhiteIcon.png";
+                        break;
+                    case 'U':
+                        imageName = "BlueIcon.png";
+                        break;
+                    case 'B':
+                        imageName = "BlackIcon.png";
+                        break;
+                    case 'R':
+                        imageName = "RedIcon.png";
+                        break;
+                    case 'G':
+                        imageName = "GreenIcon.png";
+                        break;
+                }
+                ImageIcon imageIcon = new ImageIcon("src/main/resources/" + imageName);
+                JLabel imageLabel = new JLabel(imageIcon);
+                manaCostPanel.add(imageLabel);
+            }
+        }
+
     }
 }
