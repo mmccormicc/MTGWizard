@@ -22,7 +22,16 @@ public class InventoryUI extends JPanel {
 
     private ArrayList<Card> inventoryCards;
 
-    InventoryUI() {
+    private JTabbedPane tabbedPane;
+    private SearchUI searchUI;
+
+    InventoryUI(JTabbedPane tabbedPane, SearchUI searchUI) {
+        // Setting tabbed pane so it can be passed
+        this.tabbedPane = tabbedPane;
+        // Setting search ui
+        this.searchUI = searchUI;
+
+        // Setting layout
         setLayout(new BorderLayout());
 
         // LEFT BUTTONS PANEL
@@ -94,7 +103,7 @@ public class InventoryUI extends JPanel {
         for (Card card : inventoryCards) {
 
             // Creating new search panel entry
-            InventoryEntryPanel inventoryPanel = new InventoryEntryPanel(card);
+            InventoryEntryPanel inventoryPanel = new InventoryEntryPanel(card, 10, tabbedPane, searchUI);
             // Adding entry to search result box
             inventoryBox.add(inventoryPanel);
 

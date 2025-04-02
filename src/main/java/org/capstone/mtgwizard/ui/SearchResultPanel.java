@@ -49,10 +49,7 @@ public class SearchResultPanel extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                //SearchUI.remove();
-                //SearchUI.updateUI();
                 searchUI.displayCardInfo(card);
-                System.out.println(card.getName());
             }
         });
     }

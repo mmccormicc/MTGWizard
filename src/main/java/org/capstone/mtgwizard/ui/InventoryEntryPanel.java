@@ -14,12 +14,17 @@ import static org.capstone.mtgwizard.ui.ProgramFonts.mediumFont;
 public class InventoryEntryPanel extends JPanel {
 
     // Holds card that panel represents
-    Card card;;
+    Card card;
 
-    InventoryEntryPanel(Card card) {
+    // Holds quantity of card in database
+    int quantity;
+
+    InventoryEntryPanel(Card card, int quantity, JTabbedPane tabbedPane, SearchUI searchUI) {
 
         this.card = card;
+        this.quantity = quantity;
 
+        // Adding border
         setBorder(BorderFactory.createLineBorder(Color.black));
 
         // Setting layout
@@ -33,14 +38,30 @@ public class InventoryEntryPanel extends JPanel {
         // Creating label for card name
         JLabel nameLabel = new JLabel(card.getName());
         nameLabel.setFont(boldMediumFont);
+        // Adding namelabel
+        add(nameLabel, cons);
 
         // Creating label for card set
         JLabel setLabel = new JLabel(card.getSet());
         setLabel.setFont(mediumFont);
-
-        // Adding labels to panel
-        add(nameLabel, cons);
+        // Adding setlabel
         add(setLabel, cons);
+
+        // Creating label for card quantity
+        JLabel quantityLabel = new JLabel("Qt. " + Integer.toString(quantity));
+        quantityLabel.setFont(mediumFont);
+        cons.gridx = 1;
+        add(quantityLabel, cons);
+
+        // Mouse listener for when panel is clicked on
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                // Sending user to card in search tab
+                tabbedPane.setSelectedIndex(0);
+                searchUI.displayCardInfo(card);
+            }
+        });
 
     }
 

@@ -26,21 +26,24 @@ public class Main {
 
         window.getContentPane().setBackground(Color.BLACK);
 
-        // Initializing search tab
-        SearchUI searchUI = new SearchUI();
-
-        // Initializing inventory tab
-        InventoryUI inventoryUI = new InventoryUI();
 
         // Initializing tabbed pane to hold tabs
         JTabbedPane tabbedPane = new JTabbedPane();
         window.add(tabbedPane);
+
+        // Initializing search tab
+        SearchUI searchUI = new SearchUI();
+
+        // Initializing inventory tab, need to pass tabbed pane so tabs can be switched within it
+        InventoryUI inventoryUI = new InventoryUI(tabbedPane, searchUI);
 
         // Adding search tab to tabbed pane
         tabbedPane.add("Search", searchUI);
 
         // Adding inventory tab to tabbed pane
         tabbedPane.add("Inventory", inventoryUI);
+
+        tabbedPane.setSelectedIndex(1);
 
         // Making it so user can resize window
         window.setResizable(true);
