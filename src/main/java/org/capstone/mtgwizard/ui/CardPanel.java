@@ -25,8 +25,6 @@ public class CardPanel extends JPanel {
 
         // Holds constraints for gtrid bag
         GridBagConstraints constraints = new GridBagConstraints();
-        // Constraints will fill out horizontal space
-        constraints.weightx = 1;
 
         // Initializing grid bag layout
         GridBagLayout layout = new GridBagLayout();
@@ -54,7 +52,7 @@ public class CardPanel extends JPanel {
         constraints.gridx = 0;
         constraints.gridy = 2;
         JSeparator separator1 = new JSeparator();
-        separator1.setPreferredSize(new Dimension(400, 20));
+        separator1.setPreferredSize(new Dimension(400, 1));
         add(separator1, constraints);
         add(separator1, constraints);
 
@@ -65,9 +63,14 @@ public class CardPanel extends JPanel {
         rulesTextArea.setFocusable(false);
         constraints.gridx = 0;
         constraints.gridy = 3;
+        // Spacing between left and right columns of card info
         add(rulesTextArea, constraints);
 
         // 104 x 104
+
+        constraints.gridx = 1;
+        constraints.gridy = 1;
+        add(Box.createHorizontalStrut(100));
 
 
         // RIGHT SIDE COMPONENTS
@@ -76,7 +79,7 @@ public class CardPanel extends JPanel {
         setLabel = new JLabel();
         setLabel.setFont(mediumFont);
         constraints.gridx = 2;
-        constraints.gridy = 0;
+        constraints.gridy = 1;
         add(setLabel, constraints);
 
         // Initializing mana cost label
@@ -87,7 +90,8 @@ public class CardPanel extends JPanel {
         manaCostPanel = new JPanel();
         manaCostPanel.setLayout(new FlowLayout());
         constraints.gridx = 2;
-        constraints.gridy = 1;
+        constraints.gridy = 2;
+        constraints.insets = new Insets(0, 0, 20, 0);
         add(manaCostPanel, constraints);
 
 
@@ -95,29 +99,28 @@ public class CardPanel extends JPanel {
         tcgPriceLabel = new JLabel();
         tcgPriceLabel.setFont(mediumFont);
         constraints.gridx = 2;
-        constraints.gridy = 2;
+        constraints.gridy = 3;
+        constraints.insets = new Insets(0, 0, 5, 0);
         add(tcgPriceLabel, constraints);
+        //constraints.insets = new Insets(0, 0, 0, 0);
 
         // Card price from Card Kingdom
         cardKingdomPriceLabel = new JLabel();
         cardKingdomPriceLabel.setFont(mediumFont);
         constraints.gridx = 2;
-        constraints.gridy = 3;
+        constraints.gridy = 4;
+        constraints.insets = new Insets(0, 0, 30, 0);
         add(cardKingdomPriceLabel, constraints);
 
-        // Separator between price and add to inventory button
-        constraints.gridx = 2;
-        constraints.gridy = 4;
-        JSeparator separator3 = new JSeparator();
-        separator3.setPreferredSize(new Dimension(0, 20));
-        add(separator3, constraints);
 
         // Button to add card to inventory
         addToInventoryButton = new JButton("Add To Inventory");
         addToInventoryButton.setFont(mediumFont);
         constraints.gridx = 2;
         constraints.gridy = 5;
+        constraints.insets = new Insets(0, 0, 5, 0);
         add(addToInventoryButton, constraints);
+        constraints.insets = new Insets(0, 0, 0, 0);
 
         // Button to remove card from inventory
         removeFromInventoryButton = new JButton("Remove From Inventory");

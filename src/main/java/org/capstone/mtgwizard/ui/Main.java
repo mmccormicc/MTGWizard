@@ -43,8 +43,6 @@ public class Main {
         // Adding inventory tab to tabbed pane
         tabbedPane.add("Inventory", inventoryUI);
 
-        tabbedPane.setSelectedIndex(1);
-
         // Making it so user can resize window
         window.setResizable(true);
 

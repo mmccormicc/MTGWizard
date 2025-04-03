@@ -60,6 +60,8 @@ public class InventoryEntryPanel extends JPanel {
                 // Sending user to card in search tab
                 tabbedPane.setSelectedIndex(0);
                 searchUI.displayCardInfo(card);
+                // KNOWN BUG: Search bar acts as if user just clicked on it when card is selected from inventory and user searched
+                // for a card before
             }
         });
 

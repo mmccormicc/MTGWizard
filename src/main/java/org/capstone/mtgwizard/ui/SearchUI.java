@@ -86,7 +86,7 @@ public class SearchUI extends JPanel {
                 "to their owner's hands.", "Ravnica", "Sorcery"));
 
         cardsFound.add(new Card("Lame Card", 5.99f, 6.99f,"5WUBRG", "Return all nonland permanents \n " +
-                "to their owner's hands.", "Ravnica", "Sorcery"));
+                "to their owner's hands. \n n \n n \n n \n n \n n \n n \n n", "Ravnica", "Sorcery"));
     }
 
     public void performSearch() {
@@ -117,10 +117,14 @@ public class SearchUI extends JPanel {
 
     // Switching from result panel to card panel
     public void displayCardInfo(Card card) {
+        // Removing results and adding card info
         remove(resultPanel);
         cardPanel.setCard(card);
-        add(cardPanel);
+        add(cardPanel, BorderLayout.CENTER);
+
         showingCard = true;
+
+        //searchField.setText("Search for a card");
         updateUI();
     }
 
