@@ -85,8 +85,16 @@ public class SearchUI extends JPanel {
         cardsFound.add(new Card("Epic Card", 5.99f, 6.99f,"5EE", "Return all nonland permanents " +
                 "to their owner's hands.", "Ravnica", "Sorcery"));
 
-        cardsFound.add(new Card("Lame Card", 5.99f, 6.99f,"5WUBRG", "Return all nonland permanents \n " +
-                "to their owner's hands. \n n \n n \n n \n n \n n \n n \n n", "Ravnica", "Sorcery"));
+        cardsFound.add(new Card("Questing Beast", 5.99f, 6.99f,"2GG",
+                "Vigilance, deathtouch, haste\n" +
+                "Questing Beast can't be blocked by creatures\n" +
+                "with power 2 or less.\n" +
+                "Combat damage that would be dealt by\n" +
+                "creatures you control can't be prevented.\n" +
+                "Whenever Questing Beast deals combat damage\n" +
+                "to an opponent, it deals that much damage to\n" +
+                "target planeswalker that player controls.",
+                "Eldraine", "Legendary Creature"));
     }
 
     public void performSearch() {
