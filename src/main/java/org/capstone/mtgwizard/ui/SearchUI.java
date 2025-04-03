@@ -7,7 +7,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-import static org.capstone.mtgwizard.ui.ProgramFonts.boldMediumFont;
 import static org.capstone.mtgwizard.ui.ProgramFonts.mediumFont;
 
 public class SearchUI extends JPanel {
@@ -15,8 +14,12 @@ public class SearchUI extends JPanel {
     private JTextField searchField;
     private JButton searchButton;
 
+    private JPanel resultPanel;
+    private JLabel resultLabel;
+
     private Box resultBox;
-    private JScrollPane resultPanel;
+    private JScrollPane resultScrollPanel;
+
     private CardPanel cardPanel;
     private ArrayList<Card> cardsFound;
 
@@ -56,7 +59,7 @@ public class SearchUI extends JPanel {
             // Performing search
             @Override
             public void actionPerformed(ActionEvent e) {
-                performSearch();
+                performSearch(searchField.getText());
             }
         });
 
@@ -69,7 +72,16 @@ public class SearchUI extends JPanel {
         // Initializing box that holds search results
         resultBox = Box.createVerticalBox();
         // Initializing scrollable pane of search results
-        resultPanel = new JScrollPane(resultBox);
+        resultScrollPanel = new JScrollPane(resultBox);
+
+        resultPanel = new JPanel();
+        resultPanel.setLayout(new BorderLayout());
+
+        resultLabel = new JLabel();
+        resultLabel.setFont(mediumFont);
+
+        resultPanel.add(resultLabel, BorderLayout.NORTH);
+        resultPanel.add(resultScrollPanel);
 
         // Adding search and result panels with border layout constraints
         add(searchPanel, BorderLayout.NORTH);
@@ -97,7 +109,8 @@ public class SearchUI extends JPanel {
                 "Eldraine", "Legendary Creature"));
     }
 
-    public void performSearch() {
+    // Needs to update cardsFound in future
+    public void performSearch(String searchText) {
         // Resetting search bar text
         searchField.setText("Search for a card");
 
@@ -108,18 +121,24 @@ public class SearchUI extends JPanel {
             showingCard = false;
         }
 
+        if (cardsFound.size() > 0) {
+            resultLabel.setText("Results: " + cardsFound.size());
+        } else {
+            resultLabel.setText("No Results Found");
+        }
+
         // Adds cards to scrollable pane for each card found
         for (Card card : cardsFound) {
 
             // Creating new search panel entry
-            SearchResultPanel resultPanel = new SearchResultPanel(card, this);
+            SearchResultPanel searchResultPanel = new SearchResultPanel(card, this);
             // Adding entry to search result box
-            resultBox.add(resultPanel);
+            resultBox.add(searchResultPanel);
 
         }
 
         // Updating scrollable pane
-        resultPanel.updateUI();
+        resultScrollPanel.updateUI();
 
     }
 

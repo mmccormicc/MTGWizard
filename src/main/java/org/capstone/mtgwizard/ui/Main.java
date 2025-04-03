@@ -21,7 +21,7 @@ public class Main {
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // Setting default size
-        window.setSize(800, 600);
+        window.setSize(1024, 768);
         window.setTitle("MTG Wizard");
 
         window.getContentPane().setBackground(Color.BLACK);
