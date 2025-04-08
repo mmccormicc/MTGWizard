@@ -2,8 +2,8 @@ package org.capstone.mtgwizard.dataobjects;
 
 public class Card {
 
-    private float cardKingdomPrice;
     private String name;
+    private float cardKingdomPrice;
     private float tcgPlayerPrice;
     private String manaCost;
     private String rulesText;
