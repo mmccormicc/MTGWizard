@@ -1,5 +1,6 @@
 package org.capstone.mtgwizard.ui;
 
+import org.capstone.mtgwizard.database.DatabaseHandler;
 import org.capstone.mtgwizard.dataobjects.Card;
 
 import javax.swing.*;
@@ -35,7 +36,7 @@ public class InventoryUI extends JPanel {
     private JTabbedPane tabbedPane;
     private SearchUI searchUI;
 
-    InventoryUI(JTabbedPane tabbedPane, SearchUI searchUI) {
+    public InventoryUI(JTabbedPane tabbedPane, SearchUI searchUI) {
         // Setting tabbed pane so it can be passed
         this.tabbedPane = tabbedPane;
         // Setting search ui so it can be passed

@@ -9,6 +9,7 @@ public class Card {
     private String rulesText;
     private String set;
     private String type;
+    private String uuid;
 
     public Card(String name, float cardKingdomprice, float TCGPlayerprice, String manaCost, String rulesText, String set, String type) {
         this.name = name;

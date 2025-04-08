@@ -1,7 +1,9 @@
-package org.capstone.mtgwizard.ui;
+package org.capstone.mtgwizard;
 
+import org.capstone.mtgwizard.database.DatabaseHandler;
 import org.capstone.mtgwizard.dataobjects.Card;
-import org.capstone.mtgwizard.ui.ProgramFonts;
+import org.capstone.mtgwizard.ui.InventoryUI;
+import org.capstone.mtgwizard.ui.SearchUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,8 +33,11 @@ public class Main {
         JTabbedPane tabbedPane = new JTabbedPane();
         window.add(tabbedPane);
 
+        // Creating handler that queries mtg database
+        DatabaseHandler databaseHandler = new DatabaseHandler("jdbc:mysql://localhost:3306/mtg", "root", "Lucca181630!");
+
         // Initializing search tab
-        SearchUI searchUI = new SearchUI();
+        SearchUI searchUI = new SearchUI(databaseHandler);
 
         // Initializing inventory tab, need to pass tabbed pane so tabs can be switched within it
         InventoryUI inventoryUI = new InventoryUI(tabbedPane, searchUI);

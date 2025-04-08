@@ -1,5 +1,6 @@
 package org.capstone.mtgwizard.ui;
 
+import org.capstone.mtgwizard.database.DatabaseHandler;
 import org.capstone.mtgwizard.dataobjects.Card;
 
 import javax.swing.*;
@@ -10,6 +11,8 @@ import java.util.ArrayList;
 import static org.capstone.mtgwizard.ui.ProgramFonts.mediumFont;
 
 public class SearchUI extends JPanel {
+
+    private DatabaseHandler databaseHandler;
 
     private JTextField searchField;
     private JButton searchButton;
@@ -27,8 +30,9 @@ public class SearchUI extends JPanel {
 
     private Boolean showingCard = false;
 
-    public SearchUI() {
+    public SearchUI(DatabaseHandler databaseHandler) {
 
+        this.databaseHandler = databaseHandler;
 
         // Intializing layout of tab
         setLayout(new BorderLayout());
@@ -111,6 +115,9 @@ public class SearchUI extends JPanel {
 
     // Needs to update cardsFound in future
     public void performSearch(String searchText) {
+        // Querying database for search
+        cardsFound = databaseHandler.queryDatabase(searchField.getText());
+
         // Resetting search bar text
         searchField.setText("Search for a card");
 
@@ -126,6 +133,8 @@ public class SearchUI extends JPanel {
         } else {
             resultLabel.setText("No Results Found");
         }
+
+        resultBox.removeAll();
 
         // Adds cards to scrollable pane for each card found
         for (Card card : cardsFound) {
