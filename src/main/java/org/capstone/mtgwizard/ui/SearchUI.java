@@ -26,6 +26,9 @@ public class SearchUI extends JPanel {
     private CardPanel cardPanel;
     private ArrayList<Card> cardsFound;
 
+    private JPanel backPanel;
+    private JButton backButton;
+
     public Card testCard;
 
     private Boolean showingCard = false;
@@ -111,35 +114,74 @@ public class SearchUI extends JPanel {
                 "to an opponent, it deals that much damage to\n" +
                 "target planeswalker that player controls.",
                 "Eldraine", "Legendary Creature"));
+
+        // Intializing back panel
+        backPanel = new JPanel();
+        backPanel.setLayout(new FlowLayout());
+
+        // Creating back button
+        backButton = new JButton("Go Back");
+        backButton.setFont(mediumFont);
+
+        // Adding action listener for when back button is clicked
+        backButton.addActionListener(new ActionListener() {
+            // Going back
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Removing card and back panels
+                remove(cardPanel);
+                remove(backPanel);
+                // Readding result panel
+                add(resultPanel);
+                // Card no longer being shown
+                showingCard = false;
+                // Updating UI
+                updateUI();
+            }
+        });
+        // Adding button to back panel
+        backPanel.add(backButton);
     }
 
-    // Needs to update cardsFound in future
     public void performSearch(String searchText) {
-        // Querying database for search
+
+        // Querying database from search text
         cardsFound = databaseHandler.queryDatabase(searchField.getText());
 
         // Resetting search bar text
         searchField.setText("Search for a card");
 
-        // Switching from card panel to results panel
+        // If card info is being shown
         if (showingCard) {
+            // Switching from card panel to results panel
             remove(cardPanel);
+            remove(backPanel);
             add(resultPanel);
             showingCard = false;
         }
 
+        // Number of results label
         if (cardsFound.size() > 0) {
-            resultLabel.setText("Results: " + cardsFound.size());
+            // If max results are being shown
+            if (cardsFound.size() == 100) {
+                // Max result text
+                resultLabel.setText("Showing max of 100 results");
+            } else {
+                // Showing number of results
+                resultLabel.setText("Results: " + cardsFound.size());
+            }
         } else {
+            // No results found shown
             resultLabel.setText("No Results Found");
         }
 
+        // Removing previous search results
         resultBox.removeAll();
 
         // Adds cards to scrollable pane for each card found
         for (Card card : cardsFound) {
 
-            // Creating new search panel entry
+            // Creating new search panel entry for each card
             SearchResultPanel searchResultPanel = new SearchResultPanel(card, this);
             // Adding entry to search result box
             resultBox.add(searchResultPanel);
@@ -153,14 +195,17 @@ public class SearchUI extends JPanel {
 
     // Switching from result panel to card panel
     public void displayCardInfo(Card card) {
-        // Removing results and adding card info
+        // Removing results
         remove(resultPanel);
+        // Setting card panel to display info of card
         cardPanel.setCard(card);
+        // Adding card panel and back button panel to searchUI
         add(cardPanel, BorderLayout.CENTER);
+        add(backPanel, BorderLayout.SOUTH);
 
+        // Now showing card
         showingCard = true;
 
-        //searchField.setText("Search for a card");
         updateUI();
     }
 
