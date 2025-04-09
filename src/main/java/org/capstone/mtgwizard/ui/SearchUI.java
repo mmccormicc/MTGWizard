@@ -5,6 +5,7 @@ import org.capstone.mtgwizard.database.AllPrintingsDatabaseHandler;
 import org.capstone.mtgwizard.dataobjects.Card;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public class SearchUI extends JPanel {
 
     private JTextField searchField;
     private JButton searchButton;
+    private JButton helpButton;
 
     private JPanel resultPanel;
     private JLabel resultLabel;
@@ -42,6 +44,10 @@ public class SearchUI extends JPanel {
         // Intializing layout of tab
         setLayout(new BorderLayout());
 
+        //////////////////////
+        // SEARCH PANEL
+        ////////////////////
+
         // Initializing search tab with search prompt
         searchField = new JTextField("Search for a card",20);
         searchField.setFont(mediumFont);
@@ -50,7 +56,9 @@ public class SearchUI extends JPanel {
         searchField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                searchField.setText("");
+                if(searchField.getText().equals("Search for a card")) {
+                    searchField.setText("");
+                }
             }
 
             @Override
@@ -72,29 +80,67 @@ public class SearchUI extends JPanel {
             }
         });
 
+        // Initializing help button
+        helpButton = new JButton("Help");
+        helpButton.setFont(mediumFont);
+
+        // Adding action listener for when search button is clicked
+        helpButton.addActionListener(new ActionListener() {
+            // Performing search
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                performSearch(searchField.getText());
+            }
+        });
+
         // Initializing top search panel that holds search bar and search button
-        JPanel searchPanel = new JPanel(new FlowLayout());
+        JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setBackground(Color.BLACK);
-        searchPanel.add(searchField);
-        searchPanel.add(searchButton);
+
+        // Initializing left panel that goes on left side of search panel and holds help button
+        JPanel leftPanel = new JPanel(new FlowLayout());
+        leftPanel.setBackground(Color.BLACK);
+        leftPanel.add(helpButton);
+        leftPanel.add(Box.createRigidArea(new Dimension(200, 1)));
+
+        // Adding components to search panel
+        searchPanel.add(leftPanel, BorderLayout.WEST);
+        searchPanel.add(searchField, BorderLayout.CENTER);
+        searchPanel.add(searchButton, BorderLayout.EAST);
+
+
+
+
+        //////////////////////
+        // RESULT PANEL
+        ////////////////////
 
         // Initializing box that holds search results
         resultBox = Box.createVerticalBox();
         // Initializing scrollable pane of search results
         resultScrollPanel = new JScrollPane(resultBox);
 
+        // Creating result panel
         resultPanel = new JPanel();
         resultPanel.setLayout(new BorderLayout());
 
+        // Label that shows number of results
         resultLabel = new JLabel();
         resultLabel.setFont(mediumFont);
 
         resultPanel.add(resultLabel, BorderLayout.NORTH);
         resultPanel.add(resultScrollPanel);
 
+
         // Adding search and result panels with border layout constraints
         add(searchPanel, BorderLayout.NORTH);
         add(resultPanel, BorderLayout.CENTER);
+
+
+
+        //////////////////////
+        // CARD PANEL
+        ////////////////////
 
         // Creating card panel that will hold card info, initially not shown
         cardPanel = new CardPanel();
@@ -134,9 +180,6 @@ public class SearchUI extends JPanel {
 
         // Querying database from search text
         cardsFound = allPrintingsDatabaseHandler.queryDatabase(searchField.getText());
-
-        // Resetting search bar text
-        searchField.setText("Search for a card");
 
         // If card info is being shown
         if (showingCard) {
