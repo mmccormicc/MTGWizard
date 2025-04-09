@@ -24,38 +24,47 @@ public class AllPrintingsDatabaseHandler {
         // Holds list of cards returned by query
         ArrayList<Card> cardList = new ArrayList<>();
 
-        // Pulled from query string, used to query cards
-        String name;
-        String set;
-
         // Setting query to lower case so search isn't case-sensitive
         query = query.toLowerCase();
 
-        // Getting name preceded by "name"
-        name = getCriteria(query, "name:");
-        // If no name criteria is found, set name to whole text entry
-        if(name.equals("")) {
+        // Holds search criteria found
+        String[] criteria;
+
+        // Holds name and set individually
+        String name = "";
+        String set = "";
+
+        // Tags that are searched for in query
+        String[] tags = {"name:", "set:"};
+
+        // Getting criteria based on tags
+        criteria = getCriteria(query, tags);
+
+        // If no name or set criteria is found, set name to whole text entry
+        if(criteria[0].equals("") && criteria[1].equals("")) {
             name = query;
+        } else {
+            // If a criteria is found, set both to resulting criteria
+            name = criteria[0];
+            set = criteria[1];
+            System.out.println("Name: " + name);
+            System.out.println("Set: " + set);
         }
-
-        // Getting set preceded by "set:"
-        set = getCriteria(query, "set:");
-
-        System.out.println(set);
 
         // Code below uses connection to MySQL
         try (Connection connection = DriverManager.getConnection(url, username, password)) {
             // Confirmation message
             System.out.println("Connected to MySQL database!");
 
+            PreparedStatement preparedStatement = createStatement(connection, name, set);
 
-            // Querying cards table for card names that contain card name string supplied by the user
-            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid, isFullArt FROM cards WHERE LOWER(name) LIKE ?";
-
-            // Creating prepared statement from query
-            PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
-            // Inserting name into prepared statement
-            preparedStatement.setString(1, "%" + name + "%");
+//            // Querying cards table for card names that contain card name string supplied by the user
+//            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid, isFullArt FROM cards WHERE LOWER(name) LIKE ?";
+//
+//            // Creating prepared statement from query
+//            preparedStatement = connection.prepareStatement(selectQuery);
+//            // Inserting name into prepared statement
+//            preparedStatement.setString(1, "%" + name + "%");
 
             // Executing query and getting result set
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -71,15 +80,6 @@ public class AllPrintingsDatabaseHandler {
 
             // Looping through entire result set
             while (resultSet.next()) {
-
-                // Printing out found card info
-                System.out.println("name: " + resultSet.getString("name"));
-                //    System.out.println("uuid: " + resultSet.getString("uuid"));
-                //System.out.println("text: " + resultSet.getString("text"));
-                //System.out.println("set: " + resultSet.getString("setCode"));
-                //System.out.println("isFullArt: " + resultSet.getString("isFullArt"));
-                //System.out.println("manaCost: " + resultSet.getString("manaCost"));
-                //System.out.println();
 
                 // Creating array representing seen card
                 String[] seenCard = {resultSet.getString("name"), resultSet.getString("setCode")};
@@ -100,8 +100,6 @@ public class AllPrintingsDatabaseHandler {
                     // Converting set code into set name
                     String setName = getSetName(connection, resultSet.getString("setCode"));
 
-                    // Getting prices
-                    //Float[] prices = pricesHandler.getPrices();
 
                     // Adding card to card results
                     cardList.add(createCard(resultSet.getString("name"), -1f, -1f, resultSet.getString("manaCost"),
@@ -131,33 +129,90 @@ public class AllPrintingsDatabaseHandler {
     }
 
     // Pulls a string from the query if it is preceded by criteria word such as "name:"
-    private String getCriteria(String query, String criteria) {
-        // Holds result string
-        String result = "";
+    private String[] getCriteria(String query, String[] tags) {
 
-        // Starting index of query
-        int nameIndex = query.indexOf(criteria);
-        // If criteria was found in string
-        if (nameIndex != -1) {
-            // Setting index to not include search criteria
-            int nameStartIndex = nameIndex + criteria.length();
-            // If there is a space preceding target string, go past it
-            if (query.charAt(nameStartIndex) == ' ') {
-                nameStartIndex++;
+        // Holds result array of found criteria
+        String[] result = {"", ""};
+
+        // Holds tag starting indexes
+        ArrayList<Integer> tagIndexes = new ArrayList<>();
+
+        // Getting starting index of each supplied tag
+        for(String tag : tags) {
+            tagIndexes.add(query.indexOf(tag));
+        }
+
+        // For each tag
+        for(int n = 0; n < tags.length; n++) {
+            // Getting tag
+            String tag = tags[n];
+            // Getting start index of tag
+            int tagIndex = tagIndexes.get(n);
+
+            if (tagIndex != -1) {
+                // Offsetting start index by length of tag name
+                int criteriaStartIndex = tagIndex + tag.length();
+
+                // If there is a space preceding target criteria, go past it
+                if (query.charAt(criteriaStartIndex) == ' ') {
+                    criteriaStartIndex++;
+                }
+
+                // Initializing end index at start index
+                int criteriaEndIndex = criteriaStartIndex + 1;
+                // Looping until end of search query, or another tag index is reached
+                while (!tagIndexes.contains(criteriaEndIndex) && criteriaEndIndex < query.length()) {
+                    criteriaEndIndex++;
+                }
+
+                // Creating substring which is target criteria
+                result[n] = query.substring(criteriaStartIndex, criteriaEndIndex);
+                //System.out.println("Criteria found: " + result[n]);
             }
-
-            // Initializing end index at start index
-            int nameEndIndex = nameStartIndex;
-            // Looping until end of search query
-            while (nameEndIndex < query.length()) {
-                nameEndIndex++;
-            }
-
-            // Setting result string from criteria
-            result = query.substring(nameStartIndex, nameEndIndex);
         }
 
         return result;
+
+    }
+
+    private PreparedStatement createStatement(Connection connection, String name, String set) throws SQLException {
+
+        PreparedStatement preparedStatement = null;
+
+        // Query has a name but no set
+        if (!name.equals("") && set.equals("")) {
+            // Querying cards table for card names that contain card name string supplied by the user
+            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid, isFullArt FROM cards WHERE LOWER(name) LIKE ?";
+
+            // Creating prepared statement from query
+            preparedStatement = connection.prepareStatement(selectQuery);
+            // Inserting name into prepared statement
+            preparedStatement.setString(1, "%" + name + "%");
+
+        // Query has a set but no name
+        } else if(name.equals("") && !set.equals("")) {
+            // Querying cards table for cards that have given set code
+            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid, isFullArt FROM cards WHERE LOWER(setCode) = ?";
+
+            // Creating prepared statement from query
+            preparedStatement = connection.prepareStatement(selectQuery);
+            // Inserting set code into prepared statement
+            preparedStatement.setString(1, set);
+
+        // Query has a set and name
+        } else {
+            // Querying cards table for card names that contain card name string supplied by the user, and match given set code
+            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid, isFullArt FROM cards WHERE LOWER(setCode) = ? AND LOWER(name) LIKE ?";
+
+            // Creating prepared statement from query
+            preparedStatement = connection.prepareStatement(selectQuery);
+            // Inserting set code into prepared statement
+            preparedStatement.setString(1, set);
+            // Inserting name into prepared statement
+            preparedStatement.setString(2, "%" + name + "%");
+        }
+
+        return preparedStatement;
     }
 
     private String getSetName(Connection connection, String setCode) throws SQLException {
@@ -248,11 +303,11 @@ public class AllPrintingsDatabaseHandler {
         } else {
             // Replacing text to make it more readable
             fixedText = fixedText.replace("{T}", "(Tap)");
-            fixedText = fixedText.replace("{W}", "{White}");
-            fixedText = fixedText.replace("{U}", "{Blue}");
-            fixedText = fixedText.replace("{B}", "{Black}");
-            fixedText = fixedText.replace("{R}", "{Red}");
-            fixedText = fixedText.replace("{G}", "{Green}");
+//            fixedText = fixedText.replace("{W}", "{White}");
+//            fixedText = fixedText.replace("{U}", "{Blue}");
+//            fixedText = fixedText.replace("{B}", "{Black}");
+//            fixedText = fixedText.replace("{R}", "{Red}");
+//            fixedText = fixedText.replace("{G}", "{Green}");
         }
 
         // Formatting string text to add new lines
