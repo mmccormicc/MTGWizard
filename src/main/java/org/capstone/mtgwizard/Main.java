@@ -1,7 +1,7 @@
 package org.capstone.mtgwizard;
 
-import org.capstone.mtgwizard.database.DatabaseHandler;
-import org.capstone.mtgwizard.dataobjects.Card;
+import org.capstone.mtgwizard.database.AllPricesDatabaseHandler;
+import org.capstone.mtgwizard.database.AllPrintingsDatabaseHandler;
 import org.capstone.mtgwizard.ui.InventoryUI;
 import org.capstone.mtgwizard.ui.SearchUI;
 
@@ -11,8 +11,6 @@ import java.awt.*;
 
 public class Main {
 
-    static Card testCard;
-
     public static void main(String[] args) {
         new Main();
     }
@@ -21,11 +19,23 @@ public class Main {
 
         // Intializing window
         JFrame window = new JFrame();
+
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // Setting default size
         window.setSize(1024, 768);
+        // Setting window title
         window.setTitle("MTG Wizard");
+        // Window appears in middle of screen
+        window.setLocationRelativeTo(null);
+        // Making it so user can resize window
+        window.setResizable(true);
 
+        // Getting application icon
+        ImageIcon icon = new ImageIcon("src/main/resources/images/WizardIcon.png");
+        // Setting application icons
+        window.setIconImage(icon.getImage());
+
+        // Setting background color
         window.getContentPane().setBackground(Color.BLACK);
 
 
@@ -33,11 +43,14 @@ public class Main {
         JTabbedPane tabbedPane = new JTabbedPane();
         window.add(tabbedPane);
 
+        // Creating handler that gets prices using a card's UUID
+        AllPricesDatabaseHandler allPricesDatabaseHandler = new AllPricesDatabaseHandler("src/main/resources/prices/AllPricesToday.json");
+
         // Creating handler that queries mtg database
-        DatabaseHandler databaseHandler = new DatabaseHandler("jdbc:mysql://localhost:3306/mtg", "root", "Lucca181630!");
+        AllPrintingsDatabaseHandler allPrintingsDatabaseHandler = new AllPrintingsDatabaseHandler("jdbc:mysql://localhost:3306/mtg", "root", "Lucca181630!");
 
         // Initializing search tab
-        SearchUI searchUI = new SearchUI(databaseHandler);
+        SearchUI searchUI = new SearchUI(allPrintingsDatabaseHandler, allPricesDatabaseHandler);
 
         // Initializing inventory tab, need to pass tabbed pane so tabs can be switched within it
         InventoryUI inventoryUI = new InventoryUI(tabbedPane, searchUI);
@@ -48,14 +61,8 @@ public class Main {
         // Adding inventory tab to tabbed pane
         tabbedPane.add("Inventory", inventoryUI);
 
-        // Making it so user can resize window
-        window.setResizable(true);
-
         // Setting window as visible
         window.setVisible(true);
-
-        testCard = new Card("Epic Card", 5.99f, 6.99f, "5BB", "Return all nonland permanents " +
-                "to their owner's hands.", "Ravnica", "Sorcery");
 
     }
 }

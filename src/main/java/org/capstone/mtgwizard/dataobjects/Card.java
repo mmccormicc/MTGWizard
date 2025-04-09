@@ -11,7 +11,7 @@ public class Card {
     private String type;
     private String uuid;
 
-    public Card(String name, float cardKingdomprice, float TCGPlayerprice, String manaCost, String rulesText, String set, String type) {
+    public Card(String name, float cardKingdomprice, float TCGPlayerprice, String manaCost, String rulesText, String set, String type, String uuid) {
         this.name = name;
         this.cardKingdomPrice = cardKingdomprice;
         this.tcgPlayerPrice = TCGPlayerprice;
@@ -19,6 +19,7 @@ public class Card {
         this.rulesText = rulesText;
         this.set = set;
         this.type = type;
+        this.uuid = uuid;
     }
 
     public String getName() {
@@ -78,4 +79,11 @@ public class Card {
         this.type = type;
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 }

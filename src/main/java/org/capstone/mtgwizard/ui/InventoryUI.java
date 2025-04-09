@@ -1,6 +1,5 @@
 package org.capstone.mtgwizard.ui;
 
-import org.capstone.mtgwizard.database.DatabaseHandler;
 import org.capstone.mtgwizard.dataobjects.Card;
 
 import javax.swing.*;
@@ -133,10 +132,10 @@ public class InventoryUI extends JPanel {
         // Testing adding cards to inventory
         inventoryCards = new ArrayList<>();
         inventoryCards.add(new Card("Epic Card", 5.99f, 6.99f,"5BB", "Return all nonland permanents " +
-                "to their owner's hands.", "Ravnica", "Sorcery"));
+                "to their owner's hands.", "Ravnica", "Sorcery", "1"));
 
         inventoryCards.add(new Card("Lame Card", 5.99f, 6.99f,"5BB", "Return all nonland permanents \n " +
-                "to their owner's hands.", "Ravnica", "Sorcery"));
+                "to their owner's hands.", "Ravnica", "Sorcery", "1"));
 
         updateInventory();
 

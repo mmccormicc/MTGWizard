@@ -4,7 +4,6 @@ import org.capstone.mtgwizard.dataobjects.Card;
 
 import javax.swing.*;
 import java.awt.*;
-import java.security.DigestException;
 
 import static org.capstone.mtgwizard.ui.ProgramFonts.*;
 
@@ -164,8 +163,21 @@ public class CardPanel extends JPanel {
         typeLabel.setText(card.getType());
         rulesTextArea.setText(card.getRulesText());
         setLabel.setText("Set: " + card.getSet());
-        tcgPriceLabel.setText("TCGplayer Price: $" + Float.toString(card.getTCGPlayerPrice()));
-        cardKingdomPriceLabel.setText("Card Kingdom Price: $" + Float.toString(card.getCardKingdomPrice()));
+
+
+        // If price = -1, set as not found
+        if(card.getTCGPlayerPrice() < 0) {
+            tcgPriceLabel.setText("TCGplayer Price: Not Found");
+        } else {
+            tcgPriceLabel.setText("TCGplayer Price: $" + Float.toString(card.getTCGPlayerPrice()));
+        }
+
+        // If price = -1, set as not found
+        if(card.getCardKingdomPrice() < 0) {
+            cardKingdomPriceLabel.setText("Card Kingdom Price: Not Found");
+        } else {
+            cardKingdomPriceLabel.setText("Card Kingdom Price: $" + Float.toString(card.getCardKingdomPrice()));
+        }
 
         // Updating mana cost panel
         manaCostPanel.removeAll();
@@ -201,7 +213,7 @@ public class CardPanel extends JPanel {
                         imageName = "GreenIcon.png";
                         break;
                 }
-                ImageIcon imageIcon = new ImageIcon("src/main/resources/" + imageName);
+                ImageIcon imageIcon = new ImageIcon("src/main/resources/images/" + imageName);
                 JLabel imageLabel = new JLabel(imageIcon);
                 manaCostPanel.add(imageLabel);
             }

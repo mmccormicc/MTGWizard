@@ -1,6 +1,7 @@
 package org.capstone.mtgwizard.ui;
 
-import org.capstone.mtgwizard.database.DatabaseHandler;
+import org.capstone.mtgwizard.database.AllPricesDatabaseHandler;
+import org.capstone.mtgwizard.database.AllPrintingsDatabaseHandler;
 import org.capstone.mtgwizard.dataobjects.Card;
 
 import javax.swing.*;
@@ -8,11 +9,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
+import static org.capstone.mtgwizard.ui.ProgramFonts.largeFont;
 import static org.capstone.mtgwizard.ui.ProgramFonts.mediumFont;
 
 public class SearchUI extends JPanel {
 
-    private DatabaseHandler databaseHandler;
+    private AllPrintingsDatabaseHandler allPrintingsDatabaseHandler;
+    private AllPricesDatabaseHandler pricesHandler;
 
     private JTextField searchField;
     private JButton searchButton;
@@ -29,13 +32,12 @@ public class SearchUI extends JPanel {
     private JPanel backPanel;
     private JButton backButton;
 
-    public Card testCard;
-
     private Boolean showingCard = false;
 
-    public SearchUI(DatabaseHandler databaseHandler) {
+    public SearchUI(AllPrintingsDatabaseHandler printingsHandler, AllPricesDatabaseHandler pricesHandler) {
 
-        this.databaseHandler = databaseHandler;
+        this.allPrintingsDatabaseHandler = printingsHandler;
+        this.pricesHandler = pricesHandler;
 
         // Intializing layout of tab
         setLayout(new BorderLayout());
@@ -100,28 +102,13 @@ public class SearchUI extends JPanel {
         // Initializing arraylist that holds cards found by search
         cardsFound = new ArrayList<>();
 
-        // Test cards
-        cardsFound.add(new Card("Epic Card", 5.99f, 6.99f,"5EE", "Return all nonland permanents " +
-                "to their owner's hands.", "Ravnica", "Sorcery"));
-
-        cardsFound.add(new Card("Questing Beast", 5.99f, 6.99f,"2GG",
-                "Vigilance, deathtouch, haste\n" +
-                "Questing Beast can't be blocked by creatures\n" +
-                "with power 2 or less.\n" +
-                "Combat damage that would be dealt by\n" +
-                "creatures you control can't be prevented.\n" +
-                "Whenever Questing Beast deals combat damage\n" +
-                "to an opponent, it deals that much damage to\n" +
-                "target planeswalker that player controls.",
-                "Eldraine", "Legendary Creature"));
-
         // Intializing back panel
         backPanel = new JPanel();
         backPanel.setLayout(new FlowLayout());
 
         // Creating back button
-        backButton = new JButton("Go Back");
-        backButton.setFont(mediumFont);
+        backButton = new JButton("Back");
+        backButton.setFont(largeFont);
 
         // Adding action listener for when back button is clicked
         backButton.addActionListener(new ActionListener() {
@@ -146,7 +133,7 @@ public class SearchUI extends JPanel {
     public void performSearch(String searchText) {
 
         // Querying database from search text
-        cardsFound = databaseHandler.queryDatabase(searchField.getText());
+        cardsFound = allPrintingsDatabaseHandler.queryDatabase(searchField.getText());
 
         // Resetting search bar text
         searchField.setText("Search for a card");
@@ -197,6 +184,9 @@ public class SearchUI extends JPanel {
     public void displayCardInfo(Card card) {
         // Removing results
         remove(resultPanel);
+
+        card.setCardKingdomPrice(pricesHandler.getPrice("cardkingdom", card.getUuid()));
+        card.setTCGPlayerPrice(pricesHandler.getPrice("tcgplayer", card.getUuid()));
         // Setting card panel to display info of card
         cardPanel.setCard(card);
         // Adding card panel and back button panel to searchUI
