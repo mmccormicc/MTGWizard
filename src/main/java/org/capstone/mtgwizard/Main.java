@@ -47,7 +47,7 @@ public class Main {
         AllPricesDatabaseHandler allPricesDatabaseHandler = new AllPricesDatabaseHandler("src/main/resources/prices/AllPricesToday.json");
 
         // Creating handler that queries mtg database
-        AllPrintingsDatabaseHandler allPrintingsDatabaseHandler = new AllPrintingsDatabaseHandler("jdbc:mysql://localhost:3306/mtg", "root", "Lucca181630!");
+        AllPrintingsDatabaseHandler allPrintingsDatabaseHandler = new AllPrintingsDatabaseHandler("jdbc:mysql://localhost:3306/mtg", "mtguser", "password");
 
         // Initializing search tab
         SearchUI searchUI = new SearchUI(allPrintingsDatabaseHandler, allPricesDatabaseHandler);

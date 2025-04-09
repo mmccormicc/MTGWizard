@@ -67,6 +67,26 @@ public class SearchUI extends JPanel {
             }
         });
 
+        // Key listener for when enter is pressed while searching
+        searchField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                        performSearch(searchField.getText());
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
+
         // Initializing search button
         searchButton = new JButton("Search");
         searchButton.setFont(mediumFont);
@@ -94,12 +114,14 @@ public class SearchUI extends JPanel {
 
                 JOptionPane.showMessageDialog(null,
                         "<html><font face='Arial' size='4' color='black'>" +
-                                "Search Option 1: Enter a card name or part of a card name in search box.<br>" +
+                                "Search Option 1: Enter a card name or part of a card name in search box.<br><br>" +
                                 "Example - <font color='blue'>black lotus</font><br><br>" +
                                 "Search Option 2: Format search with tags.<br>" +
-                                " Put a space between tags, and use set code for set. <br>" +
+                                "Put a space between tags, and use 3 or 4 letter set code for set. <br>" +
+                                "Set code can be found in bottom left corner of modern cards. <br><br>" +
                                 "Example - <font color='blue'>name:black lotus</font> <font color='green'>set:LEA</font><br>" +
-                                "Example - <font color='green'>set:10E</font><br>" +
+                                "Example - <font color='green'>set:10E</font><br><br>" +
+                                "Note: Letter case does not matter for searches."+
                                 "</font></html>",
                         "Search Help",
                         JOptionPane.QUESTION_MESSAGE);
@@ -114,7 +136,7 @@ public class SearchUI extends JPanel {
         JPanel leftPanel = new JPanel(new FlowLayout());
         leftPanel.setBackground(Color.BLACK);
         leftPanel.add(helpButton);
-        leftPanel.add(Box.createRigidArea(new Dimension(200, 1)));
+        leftPanel.add(Box.createRigidArea(new Dimension(100, 1)));
 
         // Adding components to search panel
         searchPanel.add(leftPanel, BorderLayout.WEST);
@@ -140,6 +162,7 @@ public class SearchUI extends JPanel {
         // Label that shows number of results
         resultLabel = new JLabel();
         resultLabel.setFont(mediumFont);
+        resultLabel.setForeground(Color.RED);
 
         resultPanel.add(resultLabel, BorderLayout.NORTH);
         resultPanel.add(resultScrollPanel);
