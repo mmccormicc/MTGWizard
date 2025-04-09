@@ -89,7 +89,20 @@ public class SearchUI extends JPanel {
             // Performing search
             @Override
             public void actionPerformed(ActionEvent e) {
-                performSearch(searchField.getText());
+
+                //"<html><font face='Arial' size='5' color='blue'><b>This is a message with a custom font.</b></font></html>";
+
+                JOptionPane.showMessageDialog(null,
+                        "<html><font face='Arial' size='4' color='black'>" +
+                                "Search Option 1: Enter a card name or part of a card name in search box.<br>" +
+                                "Example - <font color='blue'>black lotus</font><br><br>" +
+                                "Search Option 2: Format search with tags.<br>" +
+                                " Put a space between tags, and use set code for set. <br>" +
+                                "Example - <font color='blue'>name:black lotus</font> <font color='green'>set:LEA</font><br>" +
+                                "Example - <font color='green'>set:10E</font><br>" +
+                                "</font></html>",
+                        "Search Help",
+                        JOptionPane.QUESTION_MESSAGE);
             }
         });
 

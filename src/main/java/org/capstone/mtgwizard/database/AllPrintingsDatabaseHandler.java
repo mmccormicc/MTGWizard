@@ -47,8 +47,8 @@ public class AllPrintingsDatabaseHandler {
             // If a criteria is found, set both to resulting criteria
             name = criteria[0];
             set = criteria[1];
-            System.out.println("Name: " + name);
-            System.out.println("Set: " + set);
+            System.out.println("Name: " + name + "end");
+            System.out.println("Set: " + set + "end");
         }
 
         // Code below uses connection to MySQL
@@ -57,14 +57,6 @@ public class AllPrintingsDatabaseHandler {
             System.out.println("Connected to MySQL database!");
 
             PreparedStatement preparedStatement = createStatement(connection, name, set);
-
-//            // Querying cards table for card names that contain card name string supplied by the user
-//            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid, isFullArt FROM cards WHERE LOWER(name) LIKE ?";
-//
-//            // Creating prepared statement from query
-//            preparedStatement = connection.prepareStatement(selectQuery);
-//            // Inserting name into prepared statement
-//            preparedStatement.setString(1, "%" + name + "%");
 
             // Executing query and getting result set
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -132,7 +124,7 @@ public class AllPrintingsDatabaseHandler {
     private String[] getCriteria(String query, String[] tags) {
 
         // Holds result array of found criteria
-        String[] result = {"", ""};
+        String[] criteriaArray = {"", ""};
 
         // Holds tag starting indexes
         ArrayList<Integer> tagIndexes = new ArrayList<>();
@@ -161,17 +153,27 @@ public class AllPrintingsDatabaseHandler {
                 // Initializing end index at start index
                 int criteriaEndIndex = criteriaStartIndex + 1;
                 // Looping until end of search query, or another tag index is reached
-                while (!tagIndexes.contains(criteriaEndIndex) && criteriaEndIndex < query.length()) {
+                while (criteriaEndIndex < query.length()) {
+                    if (tagIndexes.contains(criteriaEndIndex)) {
+                        break;
+                    }
                     criteriaEndIndex++;
                 }
 
-                // Creating substring which is target criteria
-                result[n] = query.substring(criteriaStartIndex, criteriaEndIndex);
+                // Creating criteria string using index bounds
+                String criteria = query.substring(criteriaStartIndex, criteriaEndIndex);
+                // Removing space from end of criteria if it has one
+                if(criteria.endsWith(" ")) {
+                    criteria = criteria.substring(0, criteria.length() - 1);
+                }
+
+                // Setting criteria in array to be criteria
+                criteriaArray[n] = criteria;
                 //System.out.println("Criteria found: " + result[n]);
             }
         }
 
-        return result;
+        return criteriaArray;
 
     }
 
@@ -201,6 +203,7 @@ public class AllPrintingsDatabaseHandler {
 
         // Query has a set and name
         } else {
+            System.out.println("BOTH FOUND");
             // Querying cards table for card names that contain card name string supplied by the user, and match given set code
             String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid, isFullArt FROM cards WHERE LOWER(setCode) = ? AND LOWER(name) LIKE ?";
 
