@@ -57,9 +57,14 @@ public class Main {
 
         // Adding search tab to tabbed pane
         tabbedPane.add("Search", searchUI);
-
         // Adding inventory tab to tabbed pane
         tabbedPane.add("Inventory", inventoryUI);
+
+        // Setting tab icons
+        ImageIcon searchIcon = new ImageIcon("src/main/resources/images/SearchIcon.png");
+        tabbedPane.setIconAt(0, searchIcon);
+        ImageIcon inventoryIcon = new ImageIcon("src/main/resources/images/InventoryIcon.png");
+        tabbedPane.setIconAt(1, inventoryIcon);
 
         // Setting window as visible
         window.setVisible(true);
