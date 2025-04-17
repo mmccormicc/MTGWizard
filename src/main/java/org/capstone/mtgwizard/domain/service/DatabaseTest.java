@@ -1,4 +1,4 @@
-package org.capstone.mtgwizard.database;
+package org.capstone.mtgwizard.domain.service;
 
 import java.sql.*;
 

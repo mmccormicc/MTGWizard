@@ -1,17 +1,16 @@
-package org.capstone.mtgwizard.database;
+package org.capstone.mtgwizard.domain.service;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AllPricesDatabaseHandler {
 
-    String jsonPath = "";
-    String priceDate = "2025-04-08";
+    private String jsonPath = "";
+    private String priceDate = "2025-04-08";
 
     public AllPricesDatabaseHandler(String jsonPath) {
         this.jsonPath = jsonPath;

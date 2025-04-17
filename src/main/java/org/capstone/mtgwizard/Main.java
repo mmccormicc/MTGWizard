@@ -1,15 +1,18 @@
 package org.capstone.mtgwizard;
 
-import org.capstone.mtgwizard.database.AllPricesDatabaseHandler;
-import org.capstone.mtgwizard.database.AllPrintingsDatabaseHandler;
+import org.capstone.mtgwizard.domain.service.AllPricesDatabaseHandler;
+import org.capstone.mtgwizard.domain.service.AllPrintingsDatabaseHandler;
+import org.capstone.mtgwizard.domain.service.InventoryService;
 import org.capstone.mtgwizard.ui.InventoryUI;
 import org.capstone.mtgwizard.ui.SearchUI;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 
 
-public class Main {
+public class Main extends JFrame {
 
     public static void main(String[] args) {
         new Main();
@@ -18,30 +21,30 @@ public class Main {
     public Main() {
 
         // Intializing window
-        JFrame window = new JFrame();
+        //Frame this = new JFrame();
 
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // Setting default size
-        window.setSize(1024, 768);
+        this.setSize(1024, 768);
         // Setting window title
-        window.setTitle("MTG Wizard");
+        this.setTitle("MTG Wizard");
         // Window appears in middle of screen
-        window.setLocationRelativeTo(null);
+        this.setLocationRelativeTo(null);
         // Making it so user can resize window
-        window.setResizable(true);
+        this.setResizable(true);
 
         // Getting application icon
         ImageIcon icon = new ImageIcon("src/main/resources/images/WizardIcon.png");
         // Setting application icons
-        window.setIconImage(icon.getImage());
+        this.setIconImage(icon.getImage());
 
         // Setting background color
-        window.getContentPane().setBackground(Color.BLACK);
+        this.getContentPane().setBackground(Color.BLACK);
 
 
         // Initializing tabbed pane to hold tabs
         JTabbedPane tabbedPane = new JTabbedPane();
-        window.add(tabbedPane);
+        this.add(tabbedPane);
 
         // Creating handler that gets prices using a card's UUID
         AllPricesDatabaseHandler allPricesDatabaseHandler = new AllPricesDatabaseHandler("src/main/resources/prices/AllPricesToday.json");
@@ -49,16 +52,36 @@ public class Main {
         // Creating handler that queries mtg database
         AllPrintingsDatabaseHandler allPrintingsDatabaseHandler = new AllPrintingsDatabaseHandler("jdbc:mysql://localhost:3306/mtg", "mtguser", "password");
 
-        // Initializing search tab
-        SearchUI searchUI = new SearchUI(allPrintingsDatabaseHandler, allPricesDatabaseHandler);
+        // Initializing search tab with empty arguments
+        SearchUI searchUI = new SearchUI(null, null, null);
+
+        // Inventory service
+        InventoryService inventoryService = new InventoryService();
 
         // Initializing inventory tab, need to pass tabbed pane so tabs can be switched within it
-        InventoryUI inventoryUI = new InventoryUI(tabbedPane, searchUI);
+        InventoryUI inventoryUI = new InventoryUI(tabbedPane, searchUI, inventoryService);
+
+        // Intializing search tab with arguments now including inventoryUI
+        searchUI = new SearchUI(allPrintingsDatabaseHandler, allPricesDatabaseHandler, inventoryService);
 
         // Adding search tab to tabbed pane
         tabbedPane.add("Search", searchUI);
         // Adding inventory tab to tabbed pane
         tabbedPane.add("Inventory", inventoryUI);
+
+        // Add the ChangeListener to the JTabbedPane
+        tabbedPane.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int selectedIndex = tabbedPane.getSelectedIndex();
+
+                if (selectedIndex == 1) {
+                    inventoryUI.updateInventory();
+                    inventoryService.saveInventories();
+                }
+                // You can add more else-if blocks for additional tabs
+            }
+        });
 
         // Setting tab icons
         ImageIcon searchIcon = new ImageIcon("src/main/resources/images/SearchIcon.png");
@@ -67,7 +90,7 @@ public class Main {
         tabbedPane.setIconAt(1, inventoryIcon);
 
         // Setting window as visible
-        window.setVisible(true);
+        this.setVisible(true);
 
     }
 }

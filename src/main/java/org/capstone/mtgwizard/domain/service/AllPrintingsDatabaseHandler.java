@@ -1,22 +1,20 @@
-package org.capstone.mtgwizard.database;
+package org.capstone.mtgwizard.domain.service;
 
-import org.capstone.mtgwizard.dataobjects.Card;
-
-import org.capstone.mtgwizard.database.AllPricesDatabaseHandler;
+import org.capstone.mtgwizard.domain.model.Card;
 
 import java.sql.*;
 import java.util.ArrayList;
 
 public class AllPrintingsDatabaseHandler {
 
-    private String url;
-    private String username;
-    private String password;
+    private String dbURL;
+    private String dbUsername;
+    private String dbPassword;
 
     public AllPrintingsDatabaseHandler(String url, String username, String password) {
-        this.url = url;
-        this.username = username;
-        this.password = password;
+        this.dbURL = url;
+        this.dbUsername = username;
+        this.dbPassword = password;
     }
 
     public ArrayList<Card> queryDatabase(String query) {
@@ -52,7 +50,7 @@ public class AllPrintingsDatabaseHandler {
         }
 
         // Code below uses connection to MySQL
-        try (Connection connection = DriverManager.getConnection(url, username, password)) {
+        try (Connection connection = DriverManager.getConnection(dbURL, dbUsername, dbPassword)) {
             // Confirmation message
             System.out.println("Connected to MySQL database!");
 
@@ -244,7 +242,7 @@ public class AllPrintingsDatabaseHandler {
     }
 
     // Recursive function which formats lines of card text to fit UI better by adding new lines
-    private String formatString(String text) {
+    private String formatText(String text) {
         // Vars used in while loop
         String fixedText = text;
         int charsSinceNewLine = 0;
@@ -259,7 +257,7 @@ public class AllPrintingsDatabaseHandler {
                     textIndex++;
                 }
                 // Inserting new line at index, then calling formatString for the rest of the text and appending it to end
-                return fixedText.substring(0, textIndex) + "\n" + formatString(fixedText.substring(textIndex + 1, fixedText.length()));
+                return fixedText.substring(0, textIndex) + "\n" + formatText(fixedText.substring(textIndex + 1, fixedText.length()));
             // If it hasn't been 60 chars since last new line
             } else {
                 charsSinceNewLine++;
@@ -314,7 +312,7 @@ public class AllPrintingsDatabaseHandler {
         }
 
         // Formatting string text to add new lines
-        fixedText = formatString(fixedText);
+        fixedText = formatText(fixedText);
 
 
         return new Card(name, cardKingdomPrice, tcgPlayerPrice, fixedManaCost, fixedText, setCode, type, uuid);

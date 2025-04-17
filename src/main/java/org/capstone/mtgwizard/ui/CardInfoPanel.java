@@ -1,32 +1,37 @@
 package org.capstone.mtgwizard.ui;
 
-import org.capstone.mtgwizard.dataobjects.Card;
+import org.capstone.mtgwizard.domain.model.Card;
+import org.capstone.mtgwizard.domain.model.Inventory;
+import org.capstone.mtgwizard.domain.service.InventoryService;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import static org.capstone.mtgwizard.ui.ProgramFonts.*;
 
-public class CardPanel extends JPanel {
+public class CardInfoPanel extends JPanel {
 
-    JPanel leftPanel;
-    JPanel rightPanel;
+    private JPanel leftPanel;
+    private JPanel rightPanel;
 
-    Card card;
-    JLabel nameLabel;
-    JLabel typeLabel;
-    JTextArea rulesTextArea;
-    JLabel setLabel;
-    JLabel tcgPriceLabel;
-    JLabel cardKingdomPriceLabel;
-    JButton addToInventoryButton;
-    JButton removeFromInventoryButton;
-    JPanel manaCostPanel;
-    JLabel costLabel;
+    private Card card;
+    private JLabel nameLabel;
+    private JLabel typeLabel;
+    private JTextArea rulesTextArea;
+    private JLabel setLabel;
+    private JLabel tcgPriceLabel;
+    private JLabel cardKingdomPriceLabel;
+    private JButton addToInventoryButton;
+    private JButton removeFromInventoryButton;
+    private JPanel manaCostPanel;
+    private JLabel costLabel;
 
-    JPanel cardInfoPanel;
+    CardInfoPanel(InventoryService inventoryService) {
 
-    CardPanel() {
+
+        Inventory inventory = new Inventory();
 
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
@@ -140,6 +145,14 @@ public class CardPanel extends JPanel {
         rightPanel.add(addToInventoryButton, constraints);
         constraints.insets = new Insets(0, 0, 0, 0);
 
+        addToInventoryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                inventoryService.selectedInventory.add(card, 1);
+            }
+        });
+
+
         // Button to remove card from inventory
         removeFromInventoryButton = new JButton("Remove From Inventory");
         removeFromInventoryButton.setFont(mediumFont);
@@ -158,7 +171,7 @@ public class CardPanel extends JPanel {
     }
 
     // Updating components with card information
-    public void updateComponents() {
+    private void updateComponents() {
         nameLabel.setText(card.getName());
         typeLabel.setText(card.getType());
         rulesTextArea.setText(card.getRulesText());
@@ -179,8 +192,9 @@ public class CardPanel extends JPanel {
             cardKingdomPriceLabel.setText("Card Kingdom Price: $" + Float.toString(card.getCardKingdomPrice()));
         }
 
-        // Updating mana cost panel
+        // Removing old mana cost
         manaCostPanel.removeAll();
+        // Adding numeric cost
         manaCostPanel.add(costLabel);
 
         // Getting mana cost from card and storing it
@@ -196,6 +210,7 @@ public class CardPanel extends JPanel {
             } else {
                 // If char is not an integer
                 String imageName = "ErrorIcon.png";
+                // Assigning image based on letter representing color
                 switch (manaCost.charAt(i)) {
                     case 'W':
                         imageName = "WhiteIcon.png";

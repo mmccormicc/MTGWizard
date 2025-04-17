@@ -1,12 +1,11 @@
 package org.capstone.mtgwizard.ui;
 
-import org.capstone.mtgwizard.dataobjects.Card;
+import org.capstone.mtgwizard.domain.model.Card;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import static org.capstone.mtgwizard.ui.ProgramFonts.boldMediumFont;
 import static org.capstone.mtgwizard.ui.ProgramFonts.mediumFont;
@@ -14,7 +13,7 @@ import static org.capstone.mtgwizard.ui.ProgramFonts.mediumFont;
 public class SearchResultPanel extends JPanel {
 
     // Holds card that panel represents
-    Card card;
+    private Card card;
     SearchUI searchUI;
 
     SearchResultPanel(Card card, SearchUI searchUI) {

@@ -1,4 +1,4 @@
-package org.capstone.mtgwizard.dataobjects;
+package org.capstone.mtgwizard.domain.model;
 
 public class Card {
 

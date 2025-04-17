@@ -1,6 +1,8 @@
 package org.capstone.mtgwizard.ui;
 
-import org.capstone.mtgwizard.dataobjects.Card;
+import org.capstone.mtgwizard.domain.model.Card;
+import org.capstone.mtgwizard.domain.model.Inventory;
+import org.capstone.mtgwizard.domain.service.InventoryService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,18 +13,14 @@ import java.util.ArrayList;
 import static org.capstone.mtgwizard.ui.ProgramFonts.*;
 
 public class InventoryUI extends JPanel {
+
+    InventoryService inventoryService;
+
     // Left panel components
     private JPanel leftPanel;
-
+    // Holds drop down menu and buttons
     private JPanel inventoryEditPanel;
-    private JComboBox inventorySelect;
-    // Holds currently selected inventory
-    private int inventoryNumber = 0;
-    // Holds inventory options
-    String[] inventoryOptions = {"Inventory 1", "Inventory 2", "Inventory 3", "Inventory 4", "Inventory 5"};
 
-    private JButton addByFileButton;
-    private JButton removeByFileButton;
 
     // Right panel components
     private JPanel rightPanel;
@@ -35,7 +33,10 @@ public class InventoryUI extends JPanel {
     private JTabbedPane tabbedPane;
     private SearchUI searchUI;
 
-    public InventoryUI(JTabbedPane tabbedPane, SearchUI searchUI) {
+    public InventoryUI(JTabbedPane tabbedPane, SearchUI searchUI, InventoryService inventoryService) {
+
+        this.inventoryService = inventoryService;
+
         // Setting tabbed pane so it can be passed
         this.tabbedPane = tabbedPane;
         // Setting search ui so it can be passed
@@ -46,7 +47,6 @@ public class InventoryUI extends JPanel {
 
         // LEFT BUTTONS PANEL
         // This will hold inventory control panel, and a horizontal spacer
-
         leftPanel = new JPanel();
         leftPanel.setLayout(new FlowLayout());
 
@@ -54,18 +54,18 @@ public class InventoryUI extends JPanel {
         inventoryEditPanel.setLayout(new BoxLayout(inventoryEditPanel, BoxLayout.Y_AXIS));
 
         // Drop down menu with inventory options
-        inventorySelect = new JComboBox(inventoryOptions);
+        String[] inventoryOptions = {"Inventory 1", "Inventory 2", "Inventory 3", "Inventory 4", "Inventory 5"};
+        JComboBox inventorySelect = new JComboBox(inventoryOptions);
         inventorySelect.setFont(mediumFont);
         inventorySelect.setAlignmentX(Component.CENTER_ALIGNMENT);
         inventorySelect.setMaximumSize(new Dimension(200, 50));
         // Action listener when option is chosen
         inventorySelect.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(inventorySelect.getSelectedItem());
-                System.out.println(inventorySelect.getSelectedIndex());
+            public void actionPerformed(ActionEvent e) {;
                 // Updating inventory number to selection
-                inventoryNumber = inventorySelect.getSelectedIndex();
+                inventoryService.setInventory(inventorySelect.getSelectedIndex());
+                updateInventory();
             }
         });
         inventoryEditPanel.add(inventorySelect);
@@ -74,7 +74,7 @@ public class InventoryUI extends JPanel {
         inventoryEditPanel.add(Box.createRigidArea(new Dimension(10, 30)));
 
         // Add by file button
-        addByFileButton = new JButton("Add By File");
+        JButton addByFileButton = new JButton("Add By File");
         addByFileButton.setFont(mediumFont);
         addByFileButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         // Action listener when button is clicked
@@ -90,7 +90,7 @@ public class InventoryUI extends JPanel {
         inventoryEditPanel.add(Box.createRigidArea(new Dimension(10, 10)));
 
         // Remove by file button
-        removeByFileButton = new JButton("Remove By File");
+        JButton removeByFileButton = new JButton("Remove By File");
         removeByFileButton.setFont(mediumFont);
         removeByFileButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         // Action listener when button is clicked
@@ -142,24 +142,16 @@ public class InventoryUI extends JPanel {
 
     }
 
-    public int getInventoryNumber() {
-        return inventoryNumber;
-    }
-
-    public void setInventoryNumber(int inventoryNumber) {
-        this.inventoryNumber = inventoryNumber;
-    }
 
     public void updateInventory() {
 
-        // Adds cards to scrollable pane for each card found
-        for (Card card : inventoryCards) {
+        inventoryBox.removeAll();
 
+        for (Card card : inventoryService.selectedInventory.getCards()) {
             // Creating new search panel entry
-            InventoryEntryPanel inventoryPanel = new InventoryEntryPanel(card, 10, tabbedPane, searchUI);
+            InventoryEntryPanel inventoryPanel = new InventoryEntryPanel(card, inventoryService.selectedInventory.getCardAmount(card), tabbedPane, searchUI);
             // Adding entry to search result box
             inventoryBox.add(inventoryPanel);
-
         }
 
         // Updating scrollable pane

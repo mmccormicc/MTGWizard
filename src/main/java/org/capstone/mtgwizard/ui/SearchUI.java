@@ -1,11 +1,11 @@
 package org.capstone.mtgwizard.ui;
 
-import org.capstone.mtgwizard.database.AllPricesDatabaseHandler;
-import org.capstone.mtgwizard.database.AllPrintingsDatabaseHandler;
-import org.capstone.mtgwizard.dataobjects.Card;
+import org.capstone.mtgwizard.domain.service.AllPricesDatabaseHandler;
+import org.capstone.mtgwizard.domain.service.AllPrintingsDatabaseHandler;
+import org.capstone.mtgwizard.domain.model.Card;
+import org.capstone.mtgwizard.domain.service.InventoryService;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -15,12 +15,10 @@ import static org.capstone.mtgwizard.ui.ProgramFonts.mediumFont;
 
 public class SearchUI extends JPanel {
 
-    private AllPrintingsDatabaseHandler allPrintingsDatabaseHandler;
+    private AllPrintingsDatabaseHandler printingsHandler;
     private AllPricesDatabaseHandler pricesHandler;
 
     private JTextField searchField;
-    private JButton searchButton;
-    private JButton helpButton;
 
     private JPanel resultPanel;
     private JLabel resultLabel;
@@ -28,17 +26,16 @@ public class SearchUI extends JPanel {
     private Box resultBox;
     private JScrollPane resultScrollPanel;
 
-    private CardPanel cardPanel;
+    private CardInfoPanel cardInfoPanel;
     private ArrayList<Card> cardsFound;
-
-    private JPanel backPanel;
-    private JButton backButton;
-
     private Boolean showingCard = false;
 
-    public SearchUI(AllPrintingsDatabaseHandler printingsHandler, AllPricesDatabaseHandler pricesHandler) {
+    private JPanel backPanel;
 
-        this.allPrintingsDatabaseHandler = printingsHandler;
+
+    public SearchUI(AllPrintingsDatabaseHandler printingsHandler, AllPricesDatabaseHandler pricesHandler, InventoryService inventoryService) {
+
+        this.printingsHandler = printingsHandler;
         this.pricesHandler = pricesHandler;
 
         // Intializing layout of tab
@@ -88,7 +85,7 @@ public class SearchUI extends JPanel {
         });
 
         // Initializing search button
-        searchButton = new JButton("Search");
+        JButton searchButton = new JButton("Search");
         searchButton.setFont(mediumFont);
 
         // Adding action listener for when search button is clicked
@@ -101,7 +98,7 @@ public class SearchUI extends JPanel {
         });
 
         // Initializing help button
-        helpButton = new JButton("Help");
+        JButton helpButton = new JButton("Help");
         helpButton.setFont(mediumFont);
 
         // Adding action listener for when search button is clicked
@@ -179,7 +176,7 @@ public class SearchUI extends JPanel {
         ////////////////////
 
         // Creating card panel that will hold card info, initially not shown
-        cardPanel = new CardPanel();
+        cardInfoPanel = new CardInfoPanel(inventoryService);
 
         // Initializing arraylist that holds cards found by search
         cardsFound = new ArrayList<>();
@@ -189,7 +186,7 @@ public class SearchUI extends JPanel {
         backPanel.setLayout(new FlowLayout());
 
         // Creating back button
-        backButton = new JButton("Back");
+        JButton backButton = new JButton("Back");
         backButton.setFont(largeFont);
 
         // Adding action listener for when back button is clicked
@@ -198,7 +195,7 @@ public class SearchUI extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Removing card and back panels
-                remove(cardPanel);
+                remove(cardInfoPanel);
                 remove(backPanel);
                 // Readding result panel
                 add(resultPanel);
@@ -215,12 +212,12 @@ public class SearchUI extends JPanel {
     public void performSearch(String searchText) {
 
         // Querying database from search text
-        cardsFound = allPrintingsDatabaseHandler.queryDatabase(searchField.getText());
+        cardsFound = printingsHandler.queryDatabase(searchField.getText());
 
         // If card info is being shown
         if (showingCard) {
             // Switching from card panel to results panel
-            remove(cardPanel);
+            remove(cardInfoPanel);
             remove(backPanel);
             add(resultPanel);
             showingCard = false;
@@ -267,9 +264,9 @@ public class SearchUI extends JPanel {
         card.setCardKingdomPrice(pricesHandler.getPrice("cardkingdom", card.getUuid()));
         card.setTCGPlayerPrice(pricesHandler.getPrice("tcgplayer", card.getUuid()));
         // Setting card panel to display info of card
-        cardPanel.setCard(card);
+        cardInfoPanel.setCard(card);
         // Adding card panel and back button panel to searchUI
-        add(cardPanel, BorderLayout.CENTER);
+        add(cardInfoPanel, BorderLayout.CENTER);
         add(backPanel, BorderLayout.SOUTH);
 
         // Now showing card
