@@ -14,12 +14,12 @@ public class SearchResultPanel extends JPanel {
 
     // Holds card that panel represents
     private Card card;
-    SearchUI searchUI;
+    SearchTab searchTab;
 
-    SearchResultPanel(Card card, SearchUI searchUI) {
+    SearchResultPanel(Card card, SearchTab searchTab) {
 
         this.card = card;
-        this.searchUI = searchUI;
+        this.searchTab = searchTab;
 
         setBorder(BorderFactory.createLineBorder(Color.black));
         //resultPane.setLayout(new BoxLayout(resultPane, BoxLayout.Y_AXIS));
@@ -48,7 +48,7 @@ public class SearchResultPanel extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                searchUI.displayCardInfo(card);
+                searchTab.displayCardInfo(card);
             }
         });
     }

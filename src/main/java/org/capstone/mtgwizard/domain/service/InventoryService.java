@@ -12,6 +12,8 @@ import java.util.Set;
 
 public class InventoryService {
 
+    AllPrintingsDatabaseHandler allPrintingsDatabaseHandler;
+
     // Holds currently selected inventory
     public int inventorySelectedIndex = 0;
 
@@ -31,7 +33,9 @@ public class InventoryService {
     // Holds inventoryFiles
     File[] inventoryFiles = new File[5];
 
-    public InventoryService() {
+    public InventoryService(AllPrintingsDatabaseHandler allPrintingsDatabaseHandler) {
+
+        this.allPrintingsDatabaseHandler = allPrintingsDatabaseHandler;
 
         // Creating directory in user files to store inventories
         String homeDir = System.getProperty("user.home");
@@ -59,6 +63,12 @@ public class InventoryService {
     public void setInventory(int inventoryIndex) {
         inventorySelectedIndex = inventoryIndex;
         selectedInventory = inventories.get(inventorySelectedIndex);
+    }
+
+    public void loadInventories() {
+        for (int n = 0; n < inventories.size(); n++) {
+            inventories.get(n).loadInventory(inventoryFiles[n], allPrintingsDatabaseHandler);
+        }
     }
 
     public void saveInventories() {

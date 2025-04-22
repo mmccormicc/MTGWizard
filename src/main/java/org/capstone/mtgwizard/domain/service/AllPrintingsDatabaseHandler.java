@@ -39,7 +39,7 @@ public class AllPrintingsDatabaseHandler {
         criteria = getCriteria(query, tags);
 
         // If no name or set criteria is found, set name to whole text entry
-        if(criteria[0].equals("") && criteria[1].equals("")) {
+        if (criteria[0].equals("") && criteria[1].equals("")) {
             name = query;
         } else {
             // If a criteria is found, set both to resulting criteria
@@ -110,7 +110,7 @@ public class AllPrintingsDatabaseHandler {
 
             }
 
-        // SQL exception if query or connection produces an error
+            // SQL exception if query or connection produces an error
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -128,12 +128,12 @@ public class AllPrintingsDatabaseHandler {
         ArrayList<Integer> tagIndexes = new ArrayList<>();
 
         // Getting starting index of each supplied tag
-        for(String tag : tags) {
+        for (String tag : tags) {
             tagIndexes.add(query.indexOf(tag));
         }
 
         // For each tag
-        for(int n = 0; n < tags.length; n++) {
+        for (int n = 0; n < tags.length; n++) {
             // Getting tag
             String tag = tags[n];
             // Getting start index of tag
@@ -161,7 +161,7 @@ public class AllPrintingsDatabaseHandler {
                 // Creating criteria string using index bounds
                 String criteria = query.substring(criteriaStartIndex, criteriaEndIndex);
                 // Removing space from end of criteria if it has one
-                if(criteria.endsWith(" ")) {
+                if (criteria.endsWith(" ")) {
                     criteria = criteria.substring(0, criteria.length() - 1);
                 }
 
@@ -189,8 +189,8 @@ public class AllPrintingsDatabaseHandler {
             // Inserting name into prepared statement
             preparedStatement.setString(1, "%" + name + "%");
 
-        // Query has a set but no name
-        } else if(name.equals("") && !set.equals("")) {
+            // Query has a set but no name
+        } else if (name.equals("") && !set.equals("")) {
             // Querying cards table for cards that have given set code
             String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid, isFullArt FROM cards WHERE LOWER(setCode) = ?";
 
@@ -199,7 +199,7 @@ public class AllPrintingsDatabaseHandler {
             // Inserting set code into prepared statement
             preparedStatement.setString(1, set);
 
-        // Query has a set and name
+            // Query has a set and name
         } else {
             System.out.println("BOTH FOUND");
             // Querying cards table for card names that contain card name string supplied by the user, and match given set code
@@ -249,7 +249,7 @@ public class AllPrintingsDatabaseHandler {
         int textIndex = 0;
 
         // Continues until end of text is reached
-        while(textIndex < fixedText.length()) {
+        while (textIndex < fixedText.length()) {
             // If it has been 60 chars since the last new line
             if (charsSinceNewLine >= 60) {
                 // Increasing index until end of word is found
@@ -258,7 +258,7 @@ public class AllPrintingsDatabaseHandler {
                 }
                 // Inserting new line at index, then calling formatString for the rest of the text and appending it to end
                 return fixedText.substring(0, textIndex) + "\n" + formatText(fixedText.substring(textIndex + 1, fixedText.length()));
-            // If it hasn't been 60 chars since last new line
+                // If it hasn't been 60 chars since last new line
             } else {
                 charsSinceNewLine++;
             }
@@ -267,9 +267,9 @@ public class AllPrintingsDatabaseHandler {
             textIndex += 1;
             // This is done to prevent out of bounds errors
             // If end of text is reached
-            if(textIndex == fixedText.length()) {
+            if (textIndex == fixedText.length()) {
                 return fixedText;
-            // End of text not reached
+                // End of text not reached
             } else {
                 // Checking if next two chars are a new line
                 if (fixedText.substring(textIndex, textIndex + 1).equals("\n")) {
@@ -281,6 +281,44 @@ public class AllPrintingsDatabaseHandler {
         return fixedText;
     }
 
+    public ArrayList<Card> queryByUuid(String uuid) {
+
+        ArrayList<Card> cardList = new ArrayList();
+
+        // Code below uses connection to MySQL
+        try (Connection connection = DriverManager.getConnection(dbURL, dbUsername, dbPassword)) {
+            // Confirmation message
+            System.out.println("Connected to MySQL database!");
+
+
+            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid FROM cards WHERE uuid = ?";
+
+            // Creating prepared statement from query
+            PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
+            // Inserting set code into prepared statement
+            preparedStatement.setString(1, uuid);
+
+            // Executing query and getting result set
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+
+            // Looping through entire result set
+            while (resultSet.next()) {
+
+                // Converting set code into set name
+                String setName = getSetName(connection, resultSet.getString("setCode"));
+
+                // Adding card to card results
+                cardList.add(createCard(resultSet.getString("name"), -1f, -1f, resultSet.getString("manaCost"),
+                        resultSet.getString("text"), setName, resultSet.getString("type"), resultSet.getString("uuid")));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return cardList;
+    }
+
     private Card createCard(String name, float cardKingdomPrice, float tcgPlayerPrice, String manaCost, String text, String setCode, String type, String uuid) {
 
         // Removing curly braces so mana cost can be read by CardPanel class
@@ -288,7 +326,7 @@ public class AllPrintingsDatabaseHandler {
         // If card doesn't have a mana cost
         if (fixedManaCost == null) {
             fixedManaCost = "";
-        // Card does have a mana cost
+            // Card does have a mana cost
         } else {
             fixedManaCost = fixedManaCost.replace("{", "");
             fixedManaCost = fixedManaCost.replace("}", "");
@@ -300,7 +338,7 @@ public class AllPrintingsDatabaseHandler {
         // If card doesn't have text
         if (fixedText == null) {
             fixedText = "";
-        // Card does have text
+            // Card does have text
         } else {
             // Replacing text to make it more readable
             fixedText = fixedText.replace("{T}", "(Tap)");
@@ -319,3 +357,4 @@ public class AllPrintingsDatabaseHandler {
     }
 
 }
+

@@ -160,6 +160,13 @@ public class CardInfoPanel extends JPanel {
         constraints.gridy = 5;
         rightPanel.add(removeFromInventoryButton, constraints);
 
+        removeFromInventoryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                inventoryService.selectedInventory.remove(card, 1);
+            }
+        });
+
         add(rightPanel);
 
     }

@@ -1,7 +1,6 @@
 package org.capstone.mtgwizard.ui;
 
 import org.capstone.mtgwizard.domain.model.Card;
-import org.capstone.mtgwizard.domain.model.Inventory;
 import org.capstone.mtgwizard.domain.service.InventoryService;
 
 import javax.swing.*;
@@ -12,7 +11,7 @@ import java.util.ArrayList;
 
 import static org.capstone.mtgwizard.ui.ProgramFonts.*;
 
-public class InventoryUI extends JPanel {
+public class InventoryTab extends JPanel {
 
     InventoryService inventoryService;
 
@@ -31,16 +30,16 @@ public class InventoryUI extends JPanel {
     private ArrayList<Card> inventoryCards;
 
     private JTabbedPane tabbedPane;
-    private SearchUI searchUI;
+    private SearchTab searchTab;
 
-    public InventoryUI(JTabbedPane tabbedPane, SearchUI searchUI, InventoryService inventoryService) {
+    public InventoryTab(JTabbedPane tabbedPane, SearchTab searchTab, InventoryService inventoryService) {
 
         this.inventoryService = inventoryService;
 
         // Setting tabbed pane so it can be passed
         this.tabbedPane = tabbedPane;
         // Setting search ui so it can be passed
-        this.searchUI = searchUI;
+        this.searchTab = searchTab;
 
         // Setting layout
         setLayout(new BorderLayout());
@@ -149,7 +148,7 @@ public class InventoryUI extends JPanel {
 
         for (Card card : inventoryService.selectedInventory.getCards()) {
             // Creating new search panel entry
-            InventoryEntryPanel inventoryPanel = new InventoryEntryPanel(card, inventoryService.selectedInventory.getCardAmount(card), tabbedPane, searchUI);
+            InventoryEntryPanel inventoryPanel = new InventoryEntryPanel(card, inventoryService.selectedInventory.getCardAmount(card), tabbedPane, searchTab);
             // Adding entry to search result box
             inventoryBox.add(inventoryPanel);
         }

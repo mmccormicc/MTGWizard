@@ -18,7 +18,7 @@ public class InventoryEntryPanel extends JPanel {
     // Holds quantity of card in database
     private int quantity;
 
-    InventoryEntryPanel(Card card, int quantity, JTabbedPane tabbedPane, SearchUI searchUI) {
+    InventoryEntryPanel(Card card, int quantity, JTabbedPane tabbedPane, SearchTab searchTab) {
 
         this.card = card;
         this.quantity = quantity;
@@ -58,7 +58,7 @@ public class InventoryEntryPanel extends JPanel {
             public void mousePressed(MouseEvent e) {
                 // Sending user to card in search tab
                 tabbedPane.setSelectedIndex(0);
-                searchUI.displayCardInfo(card);
+                searchTab.displayCardInfo(card);
                 // KNOWN BUG: Search bar acts as if user just clicked on it when card is selected from inventory and user searched
                 // for a card before
             }

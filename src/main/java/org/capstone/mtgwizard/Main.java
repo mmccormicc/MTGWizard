@@ -3,8 +3,8 @@ package org.capstone.mtgwizard;
 import org.capstone.mtgwizard.domain.service.AllPricesDatabaseHandler;
 import org.capstone.mtgwizard.domain.service.AllPrintingsDatabaseHandler;
 import org.capstone.mtgwizard.domain.service.InventoryService;
-import org.capstone.mtgwizard.ui.InventoryUI;
-import org.capstone.mtgwizard.ui.SearchUI;
+import org.capstone.mtgwizard.ui.InventoryTab;
+import org.capstone.mtgwizard.ui.SearchTab;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -53,21 +53,24 @@ public class Main extends JFrame {
         AllPrintingsDatabaseHandler allPrintingsDatabaseHandler = new AllPrintingsDatabaseHandler("jdbc:mysql://localhost:3306/mtg", "mtguser", "password");
 
         // Initializing search tab with empty arguments
-        SearchUI searchUI = new SearchUI(null, null, null);
+        SearchTab searchTab = new SearchTab(null, null, null);
 
         // Inventory service
-        InventoryService inventoryService = new InventoryService();
+        InventoryService inventoryService = new InventoryService(allPrintingsDatabaseHandler);
+
+        // Loading inventories from files
+        inventoryService.loadInventories();
 
         // Initializing inventory tab, need to pass tabbed pane so tabs can be switched within it
-        InventoryUI inventoryUI = new InventoryUI(tabbedPane, searchUI, inventoryService);
+        InventoryTab inventoryTab = new InventoryTab(tabbedPane, searchTab, inventoryService);
 
-        // Intializing search tab with arguments now including inventoryUI
-        searchUI = new SearchUI(allPrintingsDatabaseHandler, allPricesDatabaseHandler, inventoryService);
+        // Intializing search tab with arguments now including inventoryTab
+        searchTab = new SearchTab(allPrintingsDatabaseHandler, allPricesDatabaseHandler, inventoryService);
 
         // Adding search tab to tabbed pane
-        tabbedPane.add("Search", searchUI);
+        tabbedPane.add("Search", searchTab);
         // Adding inventory tab to tabbed pane
-        tabbedPane.add("Inventory", inventoryUI);
+        tabbedPane.add("Inventory", inventoryTab);
 
         // Add the ChangeListener to the JTabbedPane
         tabbedPane.addChangeListener(new ChangeListener() {
@@ -76,7 +79,7 @@ public class Main extends JFrame {
                 int selectedIndex = tabbedPane.getSelectedIndex();
 
                 if (selectedIndex == 1) {
-                    inventoryUI.updateInventory();
+                    inventoryTab.updateInventory();
                     inventoryService.saveInventories();
                 }
                 // You can add more else-if blocks for additional tabs

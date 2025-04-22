@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import static org.capstone.mtgwizard.ui.ProgramFonts.largeFont;
 import static org.capstone.mtgwizard.ui.ProgramFonts.mediumFont;
 
-public class SearchUI extends JPanel {
+public class SearchTab extends JPanel {
 
     private AllPrintingsDatabaseHandler printingsHandler;
     private AllPricesDatabaseHandler pricesHandler;
@@ -33,7 +33,7 @@ public class SearchUI extends JPanel {
     private JPanel backPanel;
 
 
-    public SearchUI(AllPrintingsDatabaseHandler printingsHandler, AllPricesDatabaseHandler pricesHandler, InventoryService inventoryService) {
+    public SearchTab(AllPrintingsDatabaseHandler printingsHandler, AllPricesDatabaseHandler pricesHandler, InventoryService inventoryService) {
 
         this.printingsHandler = printingsHandler;
         this.pricesHandler = pricesHandler;
@@ -265,7 +265,7 @@ public class SearchUI extends JPanel {
         card.setTCGPlayerPrice(pricesHandler.getPrice("tcgplayer", card.getUuid()));
         // Setting card panel to display info of card
         cardInfoPanel.setCard(card);
-        // Adding card panel and back button panel to searchUI
+        // Adding card panel and back button panel to searchTab
         add(cardInfoPanel, BorderLayout.CENTER);
         add(backPanel, BorderLayout.SOUTH);
 
