@@ -112,11 +112,12 @@ public class SearchTab extends JPanel {
                 JOptionPane.showMessageDialog(null,
                         "<html><font face='Arial' size='4' color='black'>" +
                                 "Search Option 1: Enter a card name or part of a card name in search box.<br><br>" +
-                                "Example - <font color='blue'>black lotus</font><br><br>" +
+                                "Example - <font color='blue'>sol ring</font><br><br>" +
                                 "Search Option 2: Format search with tags.<br>" +
                                 "Put a space between tags, and use 3 or 4 letter set code for set. <br>" +
-                                "Set code can be found in bottom left corner of modern cards. <br><br>" +
-                                "Example - <font color='blue'>name:black lotus</font> <font color='green'>set:LEA</font><br>" +
+                                "Set code can be found in bottom left corner of modern cards. <br>" +
+                                "You can enter a set code to see all cards from a set. <br><br>" +
+                                "Example - <font color='blue'>name:sol ring</font> <font color='green'>set:C13</font><br>" +
                                 "Example - <font color='green'>set:10E</font><br><br>" +
                                 "Note: Letter case does not matter for searches."+
                                 "</font></html>",
