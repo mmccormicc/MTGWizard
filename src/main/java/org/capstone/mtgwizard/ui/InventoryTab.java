@@ -81,6 +81,7 @@ public class InventoryTab extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 inventoryService.addByFile();
+                inventoryService.saveInventories();
                 updateInventory();
             }
         });
@@ -97,6 +98,9 @@ public class InventoryTab extends JPanel {
         removeByFileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                inventoryService.removeByFile();
+                inventoryService.saveInventories();
+                updateInventory();
             }
         });
         inventoryEditPanel.add(removeByFileButton);

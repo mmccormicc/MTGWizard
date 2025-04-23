@@ -10,7 +10,7 @@ import java.util.Set;
 public class Inventory {
     private HashMap<Card, Integer> inventoryEntries = new HashMap<>();
 
-    public void addByFile(File inventoryFile, AllPrintingsDatabaseHandler allPrintingsDatabaseHandler) {
+    public void editByFile(File inventoryFile, AllPrintingsDatabaseHandler allPrintingsDatabaseHandler, String editOption) {
         // Catches file not found exceptions
         try {
             // Creating new file reader to read file
@@ -27,34 +27,54 @@ public class Inventory {
                 // If inventory line is not blank
                 if (entryWords.length > 0) {
 
+                    // Gets last word in line
                     String lastWord = entryWords[entryWords.length - 1];
 
+
+                    // Initializing query as whole line
+                    String query = line;
+
+                    // Holds if line has quantity at end or not
+                    boolean hasQuantity = false;
+
+                    // Holds cards found by query
                     ArrayList<Card> foundCards;
 
                     // If inventory line has quantity of cards at the end
                     if (isInteger(lastWord)) {
                         // Removing quantity from query
-                        String query = line.substring(0, line.length() - lastWord.length() - 1);
+                        query = line.substring(0, line.length() - lastWord.length() - 1);
+                        // Line has quantity
+                        hasQuantity = true;
                         System.out.println(query);
+                    }
 
+                    // If query is a Uuid (No card name is this long without spaces)
+                    if (entryWords[0].length() == 36) {
+                        foundCards = allPrintingsDatabaseHandler.queryByUuid(query);
+                    // Query is not a uuid
+                    } else {
                         //  Querying database
                         foundCards = allPrintingsDatabaseHandler.queryDatabase(query);
+                    }
 
-                        // If cards were found
-                        if(foundCards.size() >= 1) {
-                            // Adding card to inventory with quantity specified in file. Only adding first card found.
-                            add(foundCards.get(0), Integer.valueOf(lastWord));
-                        }
-                    // No quantity supplied
-                    } else {
-
-                        // Querying database with whole line
-                        foundCards = allPrintingsDatabaseHandler.queryDatabase(line.trim());
-
-                        // If cards were found
-                        if(foundCards.size() >= 1) {
-                            // Adding card to inventory with quantity of 1. Only adding first card found.
-                            add(foundCards.get(0), 1);
+                    // If cards were found
+                    if(foundCards.size() >= 1) {
+                        if (hasQuantity) {
+                            if (editOption.equals("add")) {
+                                // Adding card to inventory with quantity specified in file. Only adding first card found.
+                                add(foundCards.get(0), Integer.valueOf(lastWord));
+                            } else if (editOption.equals("remove")) {
+                                remove(foundCards.get(0), Integer.valueOf(lastWord));
+                            }
+                        } else {
+                            if (editOption.equals("add")) {
+                                // Adding 1 card if quantity wasn't specified
+                                add(foundCards.get(0), 1);
+                            } else if (editOption.equals("remove")) {
+                                // Removing 1 card if quantity wasn't specified
+                                remove(foundCards.get(0), 1);
+                            }
                         }
                     }
 
@@ -82,10 +102,6 @@ public class Inventory {
         } catch (NumberFormatException e) {
             return false;
         }
-    }
-
-    public void removeByFile() {
-
     }
 
     public void sortAlphabetically() {

@@ -83,7 +83,15 @@ public class InventoryService {
         // Getting user supplied file
         File userFile = selectTxtFile();
         if (userFile.isFile()) {
-            selectedInventory.addByFile(userFile, allPrintingsDatabaseHandler);
+            selectedInventory.editByFile(userFile, allPrintingsDatabaseHandler, "add");
+        }
+    }
+
+    public void removeByFile() {
+        // Getting user supplied file
+        File userFile = selectTxtFile();
+        if (userFile.isFile()) {
+            selectedInventory.editByFile(userFile, allPrintingsDatabaseHandler, "remove");
         }
     }
 

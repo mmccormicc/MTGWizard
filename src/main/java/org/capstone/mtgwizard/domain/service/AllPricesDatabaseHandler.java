@@ -9,13 +9,11 @@ import org.json.JSONObject;
 
 public class AllPricesDatabaseHandler {
 
-    private String jsonPath = "";
     private String priceDate = "2025-04-08";
 
     private JSONObject priceData = null;
 
     public AllPricesDatabaseHandler(String jsonPath) {
-        this.jsonPath = jsonPath;
 
         try {
             // Reading json from file as string
