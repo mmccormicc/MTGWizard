@@ -22,6 +22,21 @@ public class Card {
         this.uuid = uuid;
     }
 
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (this == obj) {
+//            return true;
+//        }
+//        if (obj == null || getClass() != obj.getClass()) {
+//            return false;
+//        }
+//
+//        Card compareObject = (Card) obj;
+//
+//        return this.uuid.equals(compareObject.uuid);
+//
+//    }
+
     public String getName() {
         return name;
     }

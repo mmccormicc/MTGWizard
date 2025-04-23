@@ -11,10 +11,19 @@ public class AllPrintingsDatabaseHandler {
     private String dbUsername;
     private String dbPassword;
 
+    private Connection connection = null;
+
     public AllPrintingsDatabaseHandler(String url, String username, String password) {
         this.dbURL = url;
         this.dbUsername = username;
         this.dbPassword = password;
+
+        try {
+            connection = DriverManager.getConnection(dbURL, dbUsername, dbPassword);
+            System.out.println("Successful SQL Connection.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public ArrayList<Card> queryDatabase(String query) {
@@ -49,72 +58,71 @@ public class AllPrintingsDatabaseHandler {
             System.out.println("Set: " + set + "end");
         }
 
-        // Code below uses connection to MySQL
-        try (Connection connection = DriverManager.getConnection(dbURL, dbUsername, dbPassword)) {
-            // Confirmation message
-            System.out.println("Connected to MySQL database!");
+        if (connection != null) {
+            // Code below uses connection to MySQL
+            try {
 
-            PreparedStatement preparedStatement = createStatement(connection, name, set);
+                PreparedStatement preparedStatement = createStatement(connection, name, set);
 
-            // Executing query and getting result set
-            ResultSet resultSet = preparedStatement.executeQuery();
+                // Executing query and getting result set
+                ResultSet resultSet = preparedStatement.executeQuery();
 
 
-            // Max number of results to show
-            int maxResults = 100;
-            // Number of results that will be shown
-            int numResults = 0;
+                // Max number of results to show
+                int maxResults = 100;
+                // Number of results that will be shown
+                int numResults = 0;
 
-            // Arraylist containing info of cards already seen in result set
-            ArrayList<String[]> seenCards = new ArrayList<>();
+                // Arraylist containing info of cards already seen in result set
+                ArrayList<String[]> seenCards = new ArrayList<>();
 
-            // Looping through entire result set
-            while (resultSet.next()) {
+                // Looping through entire result set
+                while (resultSet.next()) {
 
-                // Creating array representing seen card
-                String[] seenCard = {resultSet.getString("name"), resultSet.getString("setCode")};
-                // Boolean if card already found
-                boolean cardSeen = false;
+                    // Creating array representing seen card
+                    String[] seenCard = {resultSet.getString("name"), resultSet.getString("setCode")};
+                    // Boolean if card already found
+                    boolean cardSeen = false;
 
-                // Comparing seen card against previously seen cards
-                for (String[] cardIdentifier : seenCards) {
-                    // If name and set match
-                    if (cardIdentifier[0].equals(seenCard[0]) && cardIdentifier[1].equals(seenCard[1])) {
-                        // Card was seen
-                        cardSeen = true;
+                    // Comparing seen card against previously seen cards
+                    for (String[] cardIdentifier : seenCards) {
+                        // If name and set match
+                        if (cardIdentifier[0].equals(seenCard[0]) && cardIdentifier[1].equals(seenCard[1])) {
+                            // Card was seen
+                            cardSeen = true;
+                        }
                     }
-                }
-                // If card hasn't been seen yet
-                if (!cardSeen) {
+                    // If card hasn't been seen yet
+                    if (!cardSeen) {
 
-                    // Converting set code into set name
-                    String setName = getSetName(connection, resultSet.getString("setCode"));
+                        // Converting set code into set name
+                        String setName = getSetName(connection, resultSet.getString("setCode"));
 
 
-                    // Adding card to card results
-                    cardList.add(createCard(resultSet.getString("name"), -1f, -1f, resultSet.getString("manaCost"),
-                            resultSet.getString("text"), setName, resultSet.getString("type"), resultSet.getString("uuid")));
+                        // Adding card to card results
+                        cardList.add(createCard(resultSet.getString("name"), -1f, -1f, resultSet.getString("manaCost"),
+                                resultSet.getString("text"), setName, resultSet.getString("type"), resultSet.getString("uuid")));
 
-                    // Increasing number of results found
-                    numResults++;
+                        // Increasing number of results found
+                        numResults++;
 
-                    // If found more or the same number of cards as max that can be displayed
-                    if (numResults >= maxResults) {
-                        // Breaking out of result set loop
-                        break;
+                        // If found more or the same number of cards as max that can be displayed
+                        if (numResults >= maxResults) {
+                            // Breaking out of result set loop
+                            break;
+                        }
+
+                        // Adding seen card to seen cards
+                        seenCards.add(seenCard);
                     }
 
-                    // Adding seen card to seen cards
-                    seenCards.add(seenCard);
                 }
 
+                // SQL exception if query or connection produces an error
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-
-            // SQL exception if query or connection produces an error
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-
         return cardList;
     }
 
@@ -286,34 +294,34 @@ public class AllPrintingsDatabaseHandler {
         ArrayList<Card> cardList = new ArrayList();
 
         // Code below uses connection to MySQL
-        try (Connection connection = DriverManager.getConnection(dbURL, dbUsername, dbPassword)) {
-            // Confirmation message
-            System.out.println("Connected to MySQL database!");
+        if (connection != null) {
+            try {
+
+                // Looking for first entry where uuid matches
+                String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid FROM cards WHERE uuid = ? LIMIT 1";
+
+                // Creating prepared statement from query
+                PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
+                // Inserting set code into prepared statement
+                preparedStatement.setString(1, uuid);
+
+                // Executing query and getting result set
+                ResultSet resultSet = preparedStatement.executeQuery();
 
 
-            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid FROM cards WHERE uuid = ?";
+                // Looping through entire result set
+                while (resultSet.next()) {
 
-            // Creating prepared statement from query
-            PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
-            // Inserting set code into prepared statement
-            preparedStatement.setString(1, uuid);
+                    // Converting set code into set name
+                    String setName = getSetName(connection, resultSet.getString("setCode"));
 
-            // Executing query and getting result set
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-
-            // Looping through entire result set
-            while (resultSet.next()) {
-
-                // Converting set code into set name
-                String setName = getSetName(connection, resultSet.getString("setCode"));
-
-                // Adding card to card results
-                cardList.add(createCard(resultSet.getString("name"), -1f, -1f, resultSet.getString("manaCost"),
-                        resultSet.getString("text"), setName, resultSet.getString("type"), resultSet.getString("uuid")));
+                    // Adding card to card results
+                    cardList.add(createCard(resultSet.getString("name"), -1f, -1f, resultSet.getString("manaCost"),
+                            resultSet.getString("text"), setName, resultSet.getString("type"), resultSet.getString("uuid")));
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
 
         return cardList;

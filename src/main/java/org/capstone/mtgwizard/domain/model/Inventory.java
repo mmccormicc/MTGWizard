@@ -10,8 +10,78 @@ import java.util.Set;
 public class Inventory {
     private HashMap<Card, Integer> inventoryEntries = new HashMap<>();
 
-    public void addByFile() {
+    public void addByFile(File inventoryFile, AllPrintingsDatabaseHandler allPrintingsDatabaseHandler) {
+        // Catches file not found exceptions
+        try {
+            // Creating new file reader to read file
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(inventoryFile));
 
+            // Holds line in file
+            String line;
+            // Read the file line by line
+            while ((line = bufferedReader.readLine()) != null) {
+
+                // Splitting into search terms and quantity
+                String[] entryWords = line.split(" ");
+
+                // If inventory line is not blank
+                if (entryWords.length > 0) {
+
+                    String lastWord = entryWords[entryWords.length - 1];
+
+                    ArrayList<Card> foundCards;
+
+                    // If inventory line has quantity of cards at the end
+                    if (isInteger(lastWord)) {
+                        // Removing quantity from query
+                        String query = line.substring(0, line.length() - lastWord.length() - 1);
+                        System.out.println(query);
+
+                        //  Querying database
+                        foundCards = allPrintingsDatabaseHandler.queryDatabase(query);
+
+                        // If cards were found
+                        if(foundCards.size() >= 1) {
+                            // Adding card to inventory with quantity specified in file. Only adding first card found.
+                            add(foundCards.get(0), Integer.valueOf(lastWord));
+                        }
+                    // No quantity supplied
+                    } else {
+
+                        // Querying database with whole line
+                        foundCards = allPrintingsDatabaseHandler.queryDatabase(line.trim());
+
+                        // If cards were found
+                        if(foundCards.size() >= 1) {
+                            // Adding card to inventory with quantity of 1. Only adding first card found.
+                            add(foundCards.get(0), 1);
+                        }
+                    }
+
+                }
+            }
+
+            bufferedReader.close();
+
+        } catch (FileNotFoundException e) {
+            // Handle the case where the file does not exist
+            System.err.println("Error: The file '" + inventoryFile.getAbsolutePath() + "' was not found!");
+        } catch (IOException e) {
+            // Handle other IO exceptions, such as errors during reading
+            System.err.println("Error reading the file: " + e.getMessage());
+        }
+    }
+
+    public static boolean isInteger(String str) {
+        if (str == null) {
+            return false;
+        }
+        try {
+            Integer.parseInt(str.trim());
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     public void removeByFile() {
@@ -44,7 +114,7 @@ public class Inventory {
                     // If a card was found
                     if(foundCards.size() >= 1) {
                         // Adding card to inventory with quantity specified in file
-                        inventoryEntries.put(foundCards.get(0), Integer.valueOf(entryWords[1]));
+                        add(foundCards.get(0), Integer.valueOf(entryWords[1]));
                     }
                 }
             }
@@ -80,33 +150,60 @@ public class Inventory {
 
     // Add card to inventory with quantity specified
     public void add(Card card, int n) {
-        // If inventory contains entries and contains card to be added
-        if(inventoryEntries != null && inventoryEntries.containsKey(card)) {
-            // Increasing card quantity
-            inventoryEntries.put(card, inventoryEntries.get(card) + n);
+
+        // Looking for existing card in inventory by UUID
+
+        Card foundCard = null;
+        // If there are cards in inventory
+        if (inventoryEntries != null) {
+            // For each card in inventory
+            for (Card c : inventoryEntries.keySet()) {
+                // Testing if UUid matches supplied card
+                if (c.getUuid().equals(card.getUuid())) {
+                    // Card found
+                    foundCard = c;
+                }
+            }
+        }
+
+        // If inventory contains card to be added
+        if(foundCard != null) {
+            // Updating quantity using existing card key
+            inventoryEntries.put(foundCard, inventoryEntries.get(foundCard) + n);
         } else {
             // Adding new card with quantity specified
             inventoryEntries.put(card, n);
         }
 
-        // Testing cards got added
-        for (Card c : getCards()) {
-            System.out.println(c.getName() + " " + inventoryEntries.get(c));
-        }
-        System.out.println();
     }
 
     // Remove cards from inventory with quantity specified
     public void remove(Card card, int n) {
-        // If inventory contains entries and contains card to be removed
-        if(inventoryEntries != null && inventoryEntries.containsKey(card)) {
+
+        // Looking for existing card in inventory by UUID
+
+        Card foundCard = null;
+        // If there are cards in inventory
+        if (inventoryEntries != null) {
+            // For each card in inventory
+            for (Card c : inventoryEntries.keySet()) {
+                // Testing if UUid matches supplied card
+                if (c.getUuid().equals(card.getUuid())) {
+                    // Card found
+                    foundCard = c;
+                }
+            }
+        }
+
+        // If inventory contains card to be removed
+        if(foundCard != null) {
             // If request removes more or equal number of cards in inventory
-            if(inventoryEntries.get(card) <= n) {
+            if(inventoryEntries.get(foundCard) <= n) {
                 // Remove card and quantity from inventory
-                inventoryEntries.remove(card);
+                inventoryEntries.remove(foundCard);
             } else {
                 // Reduce card by specified quantity
-                inventoryEntries.put(card, inventoryEntries.get(card) - n);
+                inventoryEntries.put(foundCard, inventoryEntries.get(foundCard) - n);
             }
         }
     }

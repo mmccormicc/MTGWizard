@@ -80,6 +80,7 @@ public class InventoryTab extends JPanel {
         addByFileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                inventoryService.addByFile();
                 updateInventory();
             }
         });

@@ -10,6 +10,8 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 
 public class Main extends JFrame {
@@ -52,20 +54,18 @@ public class Main extends JFrame {
         // Creating handler that queries mtg database
         AllPrintingsDatabaseHandler allPrintingsDatabaseHandler = new AllPrintingsDatabaseHandler("jdbc:mysql://localhost:3306/mtg", "mtguser", "password");
 
-        // Initializing search tab with empty arguments
-        SearchTab searchTab = new SearchTab(null, null, null);
-
         // Inventory service
         InventoryService inventoryService = new InventoryService(allPrintingsDatabaseHandler);
 
         // Loading inventories from files
         inventoryService.loadInventories();
 
+        // Initializing search tab with empty arguments
+        SearchTab searchTab = new SearchTab(allPrintingsDatabaseHandler, allPricesDatabaseHandler, inventoryService);
+
         // Initializing inventory tab, need to pass tabbed pane so tabs can be switched within it
         InventoryTab inventoryTab = new InventoryTab(tabbedPane, searchTab, inventoryService);
 
-        // Intializing search tab with arguments now including inventoryTab
-        searchTab = new SearchTab(allPrintingsDatabaseHandler, allPricesDatabaseHandler, inventoryService);
 
         // Adding search tab to tabbed pane
         tabbedPane.add("Search", searchTab);
@@ -80,7 +80,6 @@ public class Main extends JFrame {
 
                 if (selectedIndex == 1) {
                     inventoryTab.updateInventory();
-                    inventoryService.saveInventories();
                 }
                 // You can add more else-if blocks for additional tabs
             }
@@ -91,6 +90,15 @@ public class Main extends JFrame {
         tabbedPane.setIconAt(0, searchIcon);
         ImageIcon inventoryIcon = new ImageIcon("src/main/resources/images/InventoryIcon.png");
         tabbedPane.setIconAt(1, inventoryIcon);
+
+        // Listener to handle when window closes
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent windowEvent) {
+                // Saving inventories on software close
+                inventoryService.saveInventories();
+            }
+        });
 
         // Setting window as visible
         this.setVisible(true);

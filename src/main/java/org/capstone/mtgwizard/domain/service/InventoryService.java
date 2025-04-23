@@ -2,6 +2,8 @@ package org.capstone.mtgwizard.domain.service;
 
 import org.capstone.mtgwizard.domain.model.Inventory;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -77,4 +79,66 @@ public class InventoryService {
         }
     }
 
+    public void addByFile() {
+        // Getting user supplied file
+        File userFile = selectTxtFile();
+        if (userFile.isFile()) {
+            selectedInventory.addByFile(userFile, allPrintingsDatabaseHandler);
+        }
+    }
+
+    private File selectTxtFile() {
+        // Create a file chooser
+        JFileChooser fileChooser = new JFileChooser();
+
+        // Set the title of the dialog
+        fileChooser.setDialogTitle("Select inventory .txt file");
+
+        // Create a file filter for .txt files
+        FileNameExtensionFilter textFilter = new FileNameExtensionFilter("Text Files (*.txt)", "txt");
+        fileChooser.setFileFilter(textFilter);
+
+        // Show the file chooser dialog
+        int result = fileChooser.showOpenDialog(null); // null for parent component
+
+        File selectedFile;
+
+        // Check if the user selected a file
+        if (result == JFileChooser.APPROVE_OPTION) {
+            // Getting selected file
+            selectedFile = fileChooser.getSelectedFile();
+            System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+
+            // Verify that it is a .txt file.
+            if (isTextFile(selectedFile)) {
+                System.out.println("The file is a .txt file.");
+            } else {
+                System.out.println("The file is not a .txt file.");
+                return null;
+            }
+
+        } else if (result == JFileChooser.CANCEL_OPTION) {
+            System.out.println("User cancelled the operation.");
+            return null;
+        } else {
+            System.out.println("Error occurred while choosing the file.");
+            return null;
+        }
+        return selectedFile;
+    }
+
+
+    // Helper method to check if a file is a .txt file
+    private boolean isTextFile(File file) {
+        if (file == null) {
+            return false;
+        }
+        String name = file.getName();
+        int dotIndex = name.lastIndexOf('.');
+        if (dotIndex > 0 && dotIndex < name.length() - 1) {
+            String extension = name.substring(dotIndex + 1).toLowerCase();
+            return extension.equals("txt");
+        }
+        return false;
+    }
 }
