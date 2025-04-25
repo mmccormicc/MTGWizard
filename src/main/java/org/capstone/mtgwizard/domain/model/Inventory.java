@@ -193,6 +193,14 @@ public class Inventory {
 
     }
 
+    // Custom exception for when cards are removed beyond what is in inventory
+    // This is handled when the function is called
+    public static class RemoveException extends RuntimeException {
+        public RemoveException(String message) {
+            super(message);
+        }
+    }
+
     // Remove cards from inventory with quantity specified
     public void remove(Card card, int n) {
 
@@ -213,14 +221,23 @@ public class Inventory {
 
         // If inventory contains card to be removed
         if(foundCard != null) {
-            // If request removes more or equal number of cards in inventory
-            if(inventoryEntries.get(foundCard) <= n) {
+            // If request removes more than number of cards in inventory
+            if(inventoryEntries.get(foundCard) < n) {
                 // Remove card and quantity from inventory
+                inventoryEntries.remove(foundCard);
+                // Throw overdraw error
+                throw new RemoveException("Removed more cards than are in inventory.");
+            // Removing all cards from inventory exactly
+            } else if (inventoryEntries.get(foundCard) == n) {
+                // Remove card and quantity from inventor
                 inventoryEntries.remove(foundCard);
             } else {
                 // Reduce card by specified quantity
                 inventoryEntries.put(foundCard, inventoryEntries.get(foundCard) - n);
             }
+        // Card not in inventory
+        } else {
+            throw new RemoveException("No cards left in inventory.");
         }
     }
 

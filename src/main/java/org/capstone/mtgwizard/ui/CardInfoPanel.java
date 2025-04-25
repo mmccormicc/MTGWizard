@@ -28,11 +28,11 @@ public class CardInfoPanel extends JPanel {
     private JPanel manaCostPanel;
     private JLabel costLabel;
 
+    private JLabel errorLabel;
+
     CardInfoPanel(InventoryService inventoryService) {
 
-
-        Inventory inventory = new Inventory();
-
+        // Box layout for panel
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 
 
@@ -82,16 +82,6 @@ public class CardInfoPanel extends JPanel {
         leftPanel.add(rulesTextArea, constraints);
 
         add(leftPanel);
-
-        // Trying to set constant horizontal space between panels
-//        Component spacerBox = Box.createRigidArea(new Dimension(100, 30));
-//        spacerBox.setMaximumSize(new Dimension(100, 30));
-//        add(Box.createHorizontalStrut(100));
- //         add(Box.createRigidArea(new Dimension(100, 0)));
-//        Dimension minSize = new Dimension(5, 100);
-//        Dimension prefSize = new Dimension(5, 100);
-//        Dimension maxSize = new Dimension(Short.MAX_VALUE, 100);
-//        add(new Box.Filler(minSize, prefSize, maxSize));
 
 
         // RIGHT SIDE COMPONENTS
@@ -149,8 +139,15 @@ public class CardInfoPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 inventoryService.selectedInventory.add(card, 1);
+                // Resetting error label as inventory has been updated
+                errorLabel.setText("");
             }
         });
+
+        // Label to display error for card removal
+        errorLabel = new JLabel();
+        errorLabel.setFont(boldMediumFont);
+        errorLabel.setForeground(Color.RED);
 
 
         // Button to remove card from inventory
@@ -158,16 +155,29 @@ public class CardInfoPanel extends JPanel {
         removeFromInventoryButton.setFont(mediumFont);
         constraints.gridx = 0;
         constraints.gridy = 5;
+        constraints.insets = new Insets(0, 0, 30, 0);
         rightPanel.add(removeFromInventoryButton, constraints);
+        constraints.insets = new Insets(0, 0, 0, 0);
 
         removeFromInventoryButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                inventoryService.selectedInventory.remove(card, 1);
+                try {
+                    inventoryService.selectedInventory.remove(card, 1);
+                // Catching exception if card removed when not in inventory
+                } catch (Inventory.RemoveException error) {
+                    errorLabel.setText(error.getMessage());
+                }
             }
         });
 
+        constraints.gridx = 0;
+        constraints.gridy = 6;
+        rightPanel.add(errorLabel, constraints);
+
         add(rightPanel);
+
+
 
     }
 
@@ -184,19 +194,24 @@ public class CardInfoPanel extends JPanel {
         rulesTextArea.setText(card.getRulesText());
         setLabel.setText("Set: " + card.getSet());
 
+        // Resetting error label when new card is displayed
+        errorLabel.setText("");
+
 
         // If price = -1, set as not found
         if(card.getTCGPlayerPrice() < 0) {
             tcgPriceLabel.setText("TCGplayer Price: Not Found");
         } else {
-            tcgPriceLabel.setText("TCGplayer Price: $" + Float.toString(card.getTCGPlayerPrice()));
+            // Formatting to 2 decimal points for price
+            tcgPriceLabel.setText("TCGplayer Price: $" + String.format("%.2f", card.getTCGPlayerPrice()));
         }
 
         // If price = -1, set as not found
         if(card.getCardKingdomPrice() < 0) {
             cardKingdomPriceLabel.setText("Card Kingdom Price: Not Found");
         } else {
-            cardKingdomPriceLabel.setText("Card Kingdom Price: $" + Float.toString(card.getCardKingdomPrice()));
+            // Formatting to 2 decimal points for price
+            cardKingdomPriceLabel.setText("Card Kingdom Price: $" + String.format("%.2f", card.getCardKingdomPrice()));
         }
 
         // Removing old mana cost

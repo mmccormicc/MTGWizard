@@ -62,7 +62,7 @@ public class AllPrintingsDatabaseHandler {
             // Code below uses connection to MySQL
             try {
 
-                PreparedStatement preparedStatement = createStatement(connection, name, set);
+                PreparedStatement preparedStatement = createSqlStatement(connection, name, set);
 
                 // Executing query and getting result set
                 ResultSet resultSet = preparedStatement.executeQuery();
@@ -183,7 +183,7 @@ public class AllPrintingsDatabaseHandler {
 
     }
 
-    private PreparedStatement createStatement(Connection connection, String name, String set) throws SQLException {
+    private PreparedStatement createSqlStatement(Connection connection, String name, String set) throws SQLException {
 
         PreparedStatement preparedStatement = null;
 
