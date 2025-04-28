@@ -25,7 +25,7 @@ public class InventoryTab extends JPanel {
     private JPanel rightPanel;
 
     private Box inventoryBox;
-    private JScrollPane inventoryPanel;
+    private JScrollPane inventoryScrollPanel;
 
     private ArrayList<Card> inventoryCards;
 
@@ -159,9 +159,15 @@ public class InventoryTab extends JPanel {
         // Initializing box that holds inventory panels
         inventoryBox = Box.createVerticalBox();
         // Initializing scrollable pane of inventory panels
-        inventoryPanel = new JScrollPane(inventoryBox);
-        inventoryPanel.setBorder(BorderFactory.createLineBorder(Color.black));
-        rightPanel.add(inventoryPanel);
+        inventoryScrollPanel = new JScrollPane(inventoryBox);
+        inventoryScrollPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+
+        // Getting vertical scroll bar and increasing scroll speed
+        JScrollBar verticalScrollBar = inventoryScrollPanel.getVerticalScrollBar();
+        verticalScrollBar.setUnitIncrement(verticalScrollBar.getUnitIncrement() * 10);
+
+
+        rightPanel.add(inventoryScrollPanel);
 
         // Right panel fills rest of space in frame
         add(rightPanel, BorderLayout.CENTER);
@@ -192,7 +198,7 @@ public class InventoryTab extends JPanel {
         }
 
         // Updating scrollable pane
-        inventoryPanel.updateUI();
+        inventoryScrollPanel.updateUI();
     }
 
 }

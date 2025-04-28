@@ -20,6 +20,8 @@ public class SearchTab extends JPanel {
 
     private JTextField searchField;
 
+    private JDialog helpDialogue;
+
     private JPanel resultPanel;
     private JLabel resultLabel;
 
@@ -97,6 +99,9 @@ public class SearchTab extends JPanel {
             }
         });
 
+        // Creating dialogue but not displaying it yet
+        helpDialogue = createHelpDialog();
+
         // Initializing help button
         JButton helpButton = new JButton("Help");
         helpButton.setFont(mediumFont);
@@ -106,23 +111,10 @@ public class SearchTab extends JPanel {
             // Performing search
             @Override
             public void actionPerformed(ActionEvent e) {
-
-                //"<html><font face='Arial' size='5' color='blue'><b>This is a message with a custom font.</b></font></html>";
-
-                JOptionPane.showMessageDialog(null,
-                        "<html><font face='Arial' size='4' color='black'>" +
-                                "Search Option 1: Enter a card name or part of a card name in search box.<br><br>" +
-                                "Example - <font color='blue'>sol ring</font><br><br>" +
-                                "Search Option 2: Format search with tags.<br>" +
-                                "Put a space between tags, and use 3 or 4 letter set code for set. <br>" +
-                                "Set code can be found in bottom left corner of modern cards. <br>" +
-                                "You can enter a set code to see all cards from a set. <br><br>" +
-                                "Example - <font color='blue'>name:sol ring</font> <font color='green'>set:C13</font><br>" +
-                                "Example - <font color='green'>set:10E</font><br><br>" +
-                                "Note: Letter case does not matter for searches."+
-                                "</font></html>",
-                        "Search Help",
-                        JOptionPane.QUESTION_MESSAGE);
+                // Starting dialogue in separate thread so main window can still be interacted with
+                SwingUtilities.invokeLater(() -> {
+                    helpDialogue.setVisible(true);
+                });
             }
         });
 
@@ -152,6 +144,10 @@ public class SearchTab extends JPanel {
         resultBox = Box.createVerticalBox();
         // Initializing scrollable pane of search results
         resultScrollPanel = new JScrollPane(resultBox);
+
+        // Getting vertical scroll bar and increasing scroll speed
+        JScrollBar verticalScrollBar = resultScrollPanel.getVerticalScrollBar();
+        verticalScrollBar.setUnitIncrement(verticalScrollBar.getUnitIncrement() * 10);
 
         // Creating result panel
         resultPanel = new JPanel();
@@ -255,6 +251,37 @@ public class SearchTab extends JPanel {
         // Updating scrollable pane
         resultScrollPanel.updateUI();
 
+    }
+
+    // Create the JDialog for help window
+    private static JDialog createHelpDialog() {
+        JDialog dialog = new JDialog(null, "Search Help", Dialog.ModalityType.MODELESS); // Modeless tells dialogue to not block interactions with other windows
+
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setSize(700, 400);
+        dialog.setLocationRelativeTo(null);
+
+        // Message to be displayed
+        String message = "<html><font face='Arial' size='4' color='black'>" +
+                "Search Option 1: Enter a card name or part of a card name in search box.<br><br>" +
+                "Example - <font color='blue'>sol ring</font><br><br>" +
+                "Search Option 2: Format search with tags.<br>" +
+                "Put a space between tags, and use 3 or 4 letter set code for set. <br>" +
+                "Set code can be found in bottom left corner of modern cards. <br><br>" +
+                "You can enter a set code to see all cards from a set. <br><br>" +
+                "Example - <font color='blue'>name:sol ring</font> <font color='green'>set:C13</font><br>" +
+                "Example - <font color='green'>set:10E</font><br><br>" +
+                "Note: Letter case does not matter for searches." +
+                "</font></html>";
+
+        // Creating label with message
+        JLabel label = new JLabel(message);
+        // Centering label
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+
+        dialog.add(label);
+
+        return dialog;
     }
 
     // Switching from result panel to card panel
