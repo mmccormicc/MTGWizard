@@ -6,9 +6,10 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class Inventory {
-    private HashMap<Card, Integer> inventoryEntries = new HashMap<>();
+    private TreeMap<Card, Integer> inventoryEntries = new TreeMap<>();
 
     public void editByFile(File inventoryFile, AllPrintingsDatabaseHandler allPrintingsDatabaseHandler, String editOption) {
         // Catches file not found exceptions
@@ -239,6 +240,10 @@ public class Inventory {
         } else {
             throw new RemoveException("No cards left in inventory.");
         }
+    }
+
+    public void removeAll() {
+        inventoryEntries.clear();
     }
 
     // Returns cards in inventory

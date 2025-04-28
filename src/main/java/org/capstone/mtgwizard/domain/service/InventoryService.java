@@ -149,4 +149,9 @@ public class InventoryService {
         }
         return false;
     }
+
+    public void clearCurrentInventory() {
+        selectedInventory.removeAll();
+    }
+
 }

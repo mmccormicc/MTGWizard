@@ -1,6 +1,6 @@
 package org.capstone.mtgwizard.domain.model;
 
-public class Card {
+public class Card implements Comparable<Card> {
 
     private String name;
     private float cardKingdomPrice;
@@ -22,20 +22,11 @@ public class Card {
         this.uuid = uuid;
     }
 
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (this == obj) {
-//            return true;
-//        }
-//        if (obj == null || getClass() != obj.getClass()) {
-//            return false;
-//        }
-//
-//        Card compareObject = (Card) obj;
-//
-//        return this.uuid.equals(compareObject.uuid);
-//
-//    }
+    // Adding compare method for sorting
+    @Override
+    public int compareTo(Card o) {
+        return this.name.compareTo(o.name);
+    }
 
     public String getName() {
         return name;
@@ -101,4 +92,5 @@ public class Card {
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }
+
 }

@@ -105,12 +105,45 @@ public class InventoryTab extends JPanel {
         });
         inventoryEditPanel.add(removeByFileButton);
 
+        // Making empty space between buttons
+        inventoryEditPanel.add(Box.createRigidArea(new Dimension(10, 50)));
+
+
+        // Clear Inventory Button
+        JButton clearInventoryButton = new JButton("Clear Inventory");
+        clearInventoryButton.setFont(mediumFont);
+        clearInventoryButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // Action listener when button is clicked
+        clearInventoryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Confirmation dialogue
+                int result = JOptionPane.showConfirmDialog(
+                        null,
+                        "Are you sure you want to remove all inventory entries?", // Message to display
+                        "Confirmation", // Title of the dialog
+                        JOptionPane.YES_NO_OPTION, // Option type (Yes/No)
+                        JOptionPane.QUESTION_MESSAGE // Message type (Question)
+                );
+
+                // If user clicked yes in dialogue
+                if (result == JOptionPane.YES_OPTION) {
+                    inventoryService.clearCurrentInventory();
+                    inventoryService.saveInventories();
+                    updateInventory();
+                }
+
+            }
+        });
+        inventoryEditPanel.add(clearInventoryButton);
+
         // Adding inventory edit panel
         leftPanel.add(inventoryEditPanel);
         // Adding horizontal spacer
         leftPanel.add(Box.createRigidArea(new Dimension(50, 30)));
         // Adding left panel to left of frame
         add(leftPanel, BorderLayout.WEST);
+
 
         // RIGHT INVENTORY PANEL
 
