@@ -11,7 +11,9 @@ import java.util.TreeMap;
 public class Inventory {
     private TreeMap<Card, Integer> inventoryEntries = new TreeMap<>();
 
-    public void editByFile(File inventoryFile, AllPrintingsDatabaseHandler allPrintingsDatabaseHandler, String editOption) {
+    public String editByFile(File inventoryFile, AllPrintingsDatabaseHandler allPrintingsDatabaseHandler, String editOption) {
+        String errorString = "";
+
         // Catches file not found exceptions
         try {
             // Creating new file reader to read file
@@ -50,6 +52,7 @@ public class Inventory {
                         System.out.println(query);
                     }
 
+
                     // If query is a Uuid (No card name is this long without spaces)
                     if (entryWords[0].length() == 36) {
                         foundCards = allPrintingsDatabaseHandler.queryByUuid(query);
@@ -66,7 +69,13 @@ public class Inventory {
                                 // Adding card to inventory with quantity specified in file. Only adding first card found.
                                 add(foundCards.get(0), Integer.valueOf(lastWord));
                             } else if (editOption.equals("remove")) {
-                                remove(foundCards.get(0), Integer.valueOf(lastWord));
+                                try {
+                                    // Trying to remove found cards from inventory
+                                    remove(foundCards.get(0), Integer.valueOf(lastWord));
+                                } catch (RemoveException e) {
+                                    // If too many cards removed display error message
+                                    errorString += "ERROR: Removed too many <font color='red'>" + query + "</font> from inventory<br>";
+                                }
                             }
                         } else {
                             if (editOption.equals("add")) {
@@ -74,11 +83,20 @@ public class Inventory {
                                 add(foundCards.get(0), 1);
                             } else if (editOption.equals("remove")) {
                                 // Removing 1 card if quantity wasn't specified
-                                remove(foundCards.get(0), 1);
+                                try {
+                                    // Trying to remove found card from inventory
+                                    remove(foundCards.get(0), 1);
+                                } catch (RemoveException e) {
+                                    // If card not in inventory display error message
+                                    errorString += "ERROR: Card <font color='red'>" + query + "</font> not in inventory<br>";
+                                }
                             }
                         }
+                    // Card was not found by query
+                    } else {
+                        // Adding error message of missing card
+                        errorString += "ERROR: Card <font color='red'>" + query + "</font> not found<br>";
                     }
-
                 }
             }
 
@@ -91,6 +109,8 @@ public class Inventory {
             // Handle other IO exceptions, such as errors during reading
             System.err.println("Error reading the file: " + e.getMessage());
         }
+
+        return errorString;
     }
 
     public static boolean isInteger(String str) {

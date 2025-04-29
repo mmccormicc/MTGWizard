@@ -79,20 +79,29 @@ public class InventoryService {
         }
     }
 
-    public void addByFile() {
+    public String addByFile() {
+
+        String errorString = "";
+
         // Getting user supplied file
         File userFile = selectTxtFile();
         if (userFile.isFile()) {
-            selectedInventory.editByFile(userFile, allPrintingsDatabaseHandler, "add");
+            errorString = selectedInventory.editByFile(userFile, allPrintingsDatabaseHandler, "add");
         }
+
+        return errorString;
     }
 
-    public void removeByFile() {
+    public String removeByFile() {
+
+        String errorString = "";
         // Getting user supplied file
         File userFile = selectTxtFile();
         if (userFile.isFile()) {
-            selectedInventory.editByFile(userFile, allPrintingsDatabaseHandler, "remove");
+            errorString = selectedInventory.editByFile(userFile, allPrintingsDatabaseHandler, "remove");
         }
+
+        return errorString;
     }
 
     private File selectTxtFile() {

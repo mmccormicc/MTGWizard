@@ -80,9 +80,23 @@ public class InventoryTab extends JPanel {
         addByFileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                inventoryService.addByFile();
+
+                String errorString = inventoryService.addByFile();
                 inventoryService.saveInventories();
                 updateInventory();
+
+                if (errorString != "") {
+
+                    // Showing lines that produced errors
+                    JOptionPane.showMessageDialog(null,
+                            "<html><font face='Arial' size='4' color='black'>" +
+                                    errorString + "<br>" +
+                                    "These cards were not added to inventory." +
+                                    "</font></html>",
+                            "Inventory Add Errors",
+                            JOptionPane.ERROR_MESSAGE);
+
+                }
             }
         });
         inventoryEditPanel.add(addByFileButton);
@@ -98,9 +112,22 @@ public class InventoryTab extends JPanel {
         removeByFileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                inventoryService.removeByFile();
+                String errorString = inventoryService.removeByFile();
                 inventoryService.saveInventories();
                 updateInventory();
+
+                if (errorString != "") {
+
+                    // Showing lines that produced errors
+                    JOptionPane.showMessageDialog(null,
+                            "<html><font face='Arial' size='4' color='black'>" +
+                                    errorString + "<br>" +
+                                    "These cards were not removed from inventory." +
+                                    "</font></html>",
+                            "Inventory Remove Errors",
+                            JOptionPane.ERROR_MESSAGE);
+
+                }
             }
         });
         inventoryEditPanel.add(removeByFileButton);
