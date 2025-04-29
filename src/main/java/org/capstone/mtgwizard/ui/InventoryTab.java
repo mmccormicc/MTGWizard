@@ -20,6 +20,7 @@ public class InventoryTab extends JPanel {
     // Holds drop down menu and buttons
     private JPanel inventoryEditPanel;
 
+    private JDialog helpDialogue;
 
     // Right panel components
     private JPanel rightPanel;
@@ -52,6 +53,39 @@ public class InventoryTab extends JPanel {
         inventoryEditPanel = new JPanel();
         inventoryEditPanel.setLayout(new BoxLayout(inventoryEditPanel, BoxLayout.Y_AXIS));
 
+
+        // Creating dialogue but not displaying it yet
+        helpDialogue = createHelpDialog();
+
+        // Initializing help button
+        JButton helpButton = new JButton("Help");
+        helpButton.setFont(mediumFont);
+        helpButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        // Adding action listener for when help button is clicked
+        helpButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Starting dialogue in separate thread so main window can still be interacted with
+                SwingUtilities.invokeLater(() -> {
+                    helpDialogue.setVisible(true);
+                });
+            }
+        });
+        inventoryEditPanel.add(helpButton);
+
+        // Making empty space between help button and label
+        inventoryEditPanel.add(Box.createRigidArea(new Dimension(10, 60)));
+
+        // Select inventory label
+        JLabel selectInventoryLabel = new JLabel("Select Inventory");
+        selectInventoryLabel.setFont(mediumFont);
+        selectInventoryLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        inventoryEditPanel.add(selectInventoryLabel);
+
+        // Making empty space between label and menu
+        inventoryEditPanel.add(Box.createRigidArea(new Dimension(10, 5)));
+
+
         // Drop down menu with inventory options
         String[] inventoryOptions = {"Inventory 1", "Inventory 2", "Inventory 3", "Inventory 4", "Inventory 5"};
         JComboBox inventorySelect = new JComboBox(inventoryOptions);
@@ -70,7 +104,18 @@ public class InventoryTab extends JPanel {
         inventoryEditPanel.add(inventorySelect);
 
         // Making empty space drop down menu and buttons
-        inventoryEditPanel.add(Box.createRigidArea(new Dimension(10, 30)));
+        inventoryEditPanel.add(Box.createRigidArea(new Dimension(10, 50)));
+
+
+
+        // Mass entry label
+        JLabel massEntryLabel = new JLabel("Edit Inventory");
+        massEntryLabel.setFont(mediumFont);
+        massEntryLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        inventoryEditPanel.add(massEntryLabel);
+
+        // Making empty space between label and buttons
+        inventoryEditPanel.add(Box.createRigidArea(new Dimension(10, 5)));
 
         // Add by file button
         JButton addByFileButton = new JButton("Add By File");
@@ -114,7 +159,7 @@ public class InventoryTab extends JPanel {
         inventoryEditPanel.add(addByFileButton);
 
         // Making empty space between buttons
-        inventoryEditPanel.add(Box.createRigidArea(new Dimension(10, 10)));
+        inventoryEditPanel.add(Box.createRigidArea(new Dimension(10, 5)));
 
         // Remove by file button
         JButton removeByFileButton = new JButton("Remove By File");
@@ -196,6 +241,10 @@ public class InventoryTab extends JPanel {
         add(leftPanel, BorderLayout.WEST);
 
 
+
+
+
+
         // RIGHT INVENTORY PANEL
 
         rightPanel = new JPanel();
@@ -234,6 +283,51 @@ public class InventoryTab extends JPanel {
         updateInventory();
 
 
+    }
+
+    // Create the JDialog for help window
+    private static JDialog createHelpDialog() {
+        JDialog dialog = new JDialog(null, "Inventory Help", Dialog.ModalityType.MODELESS); // Modeless tells dialogue to not block interactions with other windows
+
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setSize(800, 450);
+        dialog.setLocationRelativeTo(null);
+
+        // Message to be displayed
+        String message = "<html><font face='Arial' size='4' color='black'>" +
+                "This is the inventory tab. Here you can keep track of lists of cards that will be saved between sessions.<br>" +
+                "This is useful for creating decks, or cataloging store inventory.<br><br>" +
+
+                "<font color='blue'>Select Inventory</font><br>" +
+                "Select the inventory you want to edit from the drop down menu.<br><br>" +
+
+                "<font color='blue'>Edit Inventory</font><br>" +
+                "These buttons allow you to mass edit inventories by uploading files.<br>" +
+                "Upload a .txt file with a list of cards shown in the format below<br>" +
+                "Each line should include a card and optionally include quantity.<br><br>" +
+
+                "<font color='red'>" +
+                "name: sol ring set: C13<br>" +
+                "Lightning Bolt 2<br>" +
+                "Island 10<br>" +
+                "</font><br><br>"+
+
+                "Make sure to put card quantity at the end of the line.<br>" +
+                "The first card found matching the line will be added to inventory.<br><br>" +
+
+                "<font color='blue'>Clear Inventory</font><br>" +
+                "This button removes all cards from the selected inventory.<br><br>" +
+
+                "</font></html>";
+
+        // Creating label with message
+        JLabel label = new JLabel(message);
+        // Centering label
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+
+        dialog.add(label);
+
+        return dialog;
     }
 
 

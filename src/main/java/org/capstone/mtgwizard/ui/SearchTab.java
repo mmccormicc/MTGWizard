@@ -183,7 +183,7 @@ public class SearchTab extends JPanel {
         backPanel.setLayout(new FlowLayout());
 
         // Creating back button
-        JButton backButton = new JButton("Back");
+        JButton backButton = new JButton("Back To Search");
         backButton.setFont(largeFont);
 
         // Adding action listener for when back button is clicked
@@ -268,9 +268,9 @@ public class SearchTab extends JPanel {
                 "Search Option 2: Format search with tags.<br>" +
                 "Put a space between tags, and use 3 or 4 letter set code for set. <br>" +
                 "Set code can be found in bottom left corner of modern cards. <br><br>" +
-                "You can enter a set code to see all cards from a set. <br><br>" +
-                "Example - <font color='blue'>name:sol ring</font> <font color='green'>set:C13</font><br>" +
-                "Example - <font color='green'>set:10E</font><br><br>" +
+                "Example - <font color='blue'>name:sol ring</font> <font color='green'>set:C13</font><br><br>" +
+                "You can enter only a set code to see all cards from a set. <br><br>" +
+                "Example - <font color='green'>set:10E</font><br><br><br>" +
                 "Note: Letter case does not matter for searches." +
                 "</font></html>";
 

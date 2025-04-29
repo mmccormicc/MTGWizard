@@ -54,8 +54,6 @@ public class AllPrintingsDatabaseHandler {
             // If a criteria is found, set both to resulting criteria
             name = criteria[0];
             set = criteria[1];
-            System.out.println("Name: " + name + "end");
-            System.out.println("Set: " + set + "end");
         }
 
         if (connection != null) {
