@@ -89,6 +89,7 @@ public class InventoryService {
             errorString = selectedInventory.editByFile(userFile, allPrintingsDatabaseHandler, "add");
         }
 
+
         return errorString;
     }
 
@@ -104,7 +105,13 @@ public class InventoryService {
         return errorString;
     }
 
-    private File selectTxtFile() {
+    public class FileTypeException extends RuntimeException {
+        public FileTypeException(String message) {
+            super(message);
+        }
+    }
+
+    private File selectTxtFile() throws FileTypeException {
         // Create a file chooser
         JFileChooser fileChooser = new JFileChooser();
 
@@ -131,7 +138,7 @@ public class InventoryService {
                 System.out.println("The file is a .txt file.");
             } else {
                 System.out.println("The file is not a .txt file.");
-                return null;
+                throw new FileTypeException("File is not a .txt file");
             }
 
         } else if (result == JFileChooser.CANCEL_OPTION) {

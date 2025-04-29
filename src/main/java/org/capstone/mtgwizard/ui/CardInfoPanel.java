@@ -17,7 +17,7 @@ public class CardInfoPanel extends JPanel {
     private JPanel rightPanel;
 
     private Card card;
-    private JLabel nameLabel;
+    private JTextArea nameTextArea;
     private JLabel typeLabel;
     private JTextArea rulesTextArea;
     private JLabel setLabel;
@@ -45,13 +45,19 @@ public class CardInfoPanel extends JPanel {
         leftPanel.setLayout(new GridBagLayout());
 
         // Card Name
-        nameLabel = new JLabel();
-        nameLabel.setFont(boldMediumFont);
+        nameTextArea = new JTextArea();
+
+        // Removing background and making name text not editable
+        nameTextArea.setEditable(false);
+        nameTextArea.setFocusable(false);
+        nameTextArea.setBackground(this.getBackground());
+
+        nameTextArea.setFont(boldMediumFont);
         // Setting position in grid layout
         constraints.gridx = 0;
         constraints.gridy = 0;
         // Adding to grid
-        leftPanel.add(nameLabel, constraints);
+        leftPanel.add(nameTextArea, constraints);
 
         // Card Type
         typeLabel = new JLabel();
@@ -189,7 +195,15 @@ public class CardInfoPanel extends JPanel {
 
     // Updating components with card information
     private void updateComponents() {
-        nameLabel.setText(card.getName());
+
+        String cardName = card.getName();
+
+        // Splitting card name into two lines for very long card names
+        if (cardName.length() > 70) {
+            cardName = cardName.substring(0, 70) + "\n" + cardName.substring(70);
+        }
+
+        nameTextArea.setText(cardName);
         typeLabel.setText(card.getType());
         rulesTextArea.setText(card.getRulesText());
         setLabel.setText("Set: " + card.getSet());

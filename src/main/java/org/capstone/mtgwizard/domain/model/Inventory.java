@@ -94,8 +94,11 @@ public class Inventory {
                         }
                     // Card was not found by query
                     } else {
-                        // Adding error message of missing card
-                        errorString += "ERROR: Card <font color='red'>" + query + "</font> not found<br>";
+                        // If line isn't blank
+                        if (!query.equals("")) {
+                            // Adding error message of missing card
+                            errorString += "ERROR: Card <font color='red'>" + query + "</font> not found<br>";
+                        }
                     }
                 }
             }
@@ -123,10 +126,6 @@ public class Inventory {
         } catch (NumberFormatException e) {
             return false;
         }
-    }
-
-    public void sortAlphabetically() {
-
     }
 
     // Loads inventory from file associated with inventory

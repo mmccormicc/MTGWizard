@@ -81,21 +81,33 @@ public class InventoryTab extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                String errorString = inventoryService.addByFile();
-                inventoryService.saveInventories();
-                updateInventory();
+                try {
 
-                if (errorString != "") {
+                    String errorString = inventoryService.addByFile();
+                    inventoryService.saveInventories();
+                    updateInventory();
 
-                    // Showing lines that produced errors
+                    if (errorString != "") {
+
+                        // Showing lines that produced errors
+                        JOptionPane.showMessageDialog(null,
+                                "<html><font face='Arial' size='4' color='black'>" +
+                                        errorString + "<br>" +
+                                        "These cards were not added to inventory." +
+                                        "</font></html>",
+                                "Inventory Add Errors",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+
+                    }
+                } catch (InventoryService.FileTypeException fileTypeException) {
                     JOptionPane.showMessageDialog(null,
                             "<html><font face='Arial' size='4' color='black'>" +
-                                    errorString + "<br>" +
-                                    "These cards were not added to inventory." +
+                                    fileTypeException.getMessage() +
                                     "</font></html>",
-                            "Inventory Add Errors",
-                            JOptionPane.ERROR_MESSAGE);
-
+                            "File Type Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
             }
         });
@@ -112,21 +124,33 @@ public class InventoryTab extends JPanel {
         removeByFileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String errorString = inventoryService.removeByFile();
-                inventoryService.saveInventories();
-                updateInventory();
+                try {
+                    String errorString = inventoryService.removeByFile();
+                    inventoryService.saveInventories();
+                    updateInventory();
 
-                if (errorString != "") {
+                    if (errorString != "") {
 
-                    // Showing lines that produced errors
+                        // Showing lines that produced errors
+                        JOptionPane.showMessageDialog(null,
+                                "<html><font face='Arial' size='4' color='black'>" +
+                                        errorString + "<br>" +
+                                        "These cards were not removed from inventory." +
+                                        "</font></html>",
+                                "Inventory Remove Errors",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+
+                    }
+
+                } catch (InventoryService.FileTypeException fileTypeException) {
                     JOptionPane.showMessageDialog(null,
                             "<html><font face='Arial' size='4' color='black'>" +
-                                    errorString + "<br>" +
-                                    "These cards were not removed from inventory." +
+                                    fileTypeException.getMessage() +
                                     "</font></html>",
-                            "Inventory Remove Errors",
-                            JOptionPane.ERROR_MESSAGE);
-
+                            "File Type Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
                 }
             }
         });
