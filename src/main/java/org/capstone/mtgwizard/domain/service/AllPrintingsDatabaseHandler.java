@@ -127,7 +127,7 @@ public class AllPrintingsDatabaseHandler {
     }
 
     // Pulls a string from the query if it is preceded by criteria word such as "name:"
-    private String[] getCriteria(String query, String[] tags) {
+    public String[] getCriteria(String query, String[] tags) {
 
         // Holds result array of found criteria
         String[] criteriaArray = {"", ""};
@@ -152,12 +152,12 @@ public class AllPrintingsDatabaseHandler {
                 int criteriaStartIndex = tagIndex + tag.length();
 
                 // If there is a space preceding target criteria, go past it
-                if (query.charAt(criteriaStartIndex) == ' ') {
+                if (criteriaStartIndex < query.length() && query.charAt(criteriaStartIndex) == ' ') {
                     criteriaStartIndex++;
                 }
 
                 // Initializing end index at start index
-                int criteriaEndIndex = criteriaStartIndex + 1;
+                int criteriaEndIndex = criteriaStartIndex;
                 // Looping until end of search query, or another tag index is reached
                 while (criteriaEndIndex < query.length()) {
                     if (tagIndexes.contains(criteriaEndIndex)) {
@@ -165,6 +165,7 @@ public class AllPrintingsDatabaseHandler {
                     }
                     criteriaEndIndex++;
                 }
+
 
                 // Creating criteria string using index bounds
                 String criteria = query.substring(criteriaStartIndex, criteriaEndIndex);
