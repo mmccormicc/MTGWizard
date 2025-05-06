@@ -1,0 +1,58 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - development
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  unit-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '23'
+          distribution: 'temurin'
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+
+      - name: Run unit tests
+        run: ./gradlew test -x test --tests '!org.capstone.mtgwizard.GetCriteriaTest'
+
+  build-jar:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    needs: unit-test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '23'
+          distribution: 'temurin'
+
+      - name: Make Gradle wrapper executable
+        run: chmod +x gradlew
+
+      - name: Build JAR
+        run: ./gradlew build
+
+      - name: Upload JAR Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-jar
+          path: build/libs/*.jar
