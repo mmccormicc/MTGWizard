@@ -1,5 +1,6 @@
 package org.capstone.mtgwizard;
 
+import com.mysql.cj.jdbc.exceptions.SQLError;
 import org.capstone.mtgwizard.domain.service.AllPricesDatabaseHandler;
 import org.capstone.mtgwizard.domain.service.AllPrintingsDatabaseHandler;
 import org.capstone.mtgwizard.domain.service.InventoryService;
@@ -12,15 +13,16 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.SQLException;
 
 
 public class Main extends JFrame {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         new Main();
     }
 
-    public Main() {
+    public Main() throws SQLException {
 
         // Intializing window
         //Frame this = new JFrame();
@@ -52,7 +54,18 @@ public class Main extends JFrame {
         AllPricesDatabaseHandler allPricesDatabaseHandler = new AllPricesDatabaseHandler("src/main/resources/prices/AllPricesToday.json");
 
         // Creating handler that queries mtg database
-        AllPrintingsDatabaseHandler allPrintingsDatabaseHandler = new AllPrintingsDatabaseHandler("jdbc:mysql://localhost:3306/mtg", "mtguser", "password");
+        //AllPrintingsDatabaseHandler allPrintingsDatabaseHandler = new AllPrintingsDatabaseHandler("jdbc:mysql://localhost:3306/mtg", "mtguser", "password");
+        AllPrintingsDatabaseHandler allPrintingsDatabaseHandler = null;
+        
+        try {
+            allPrintingsDatabaseHandler = new AllPrintingsDatabaseHandler(
+                    "jdbc:mysql://gondola.proxy.rlwy.net:39906/mtg ERROR",
+                    "readonly",
+                    "readonly_password"
+            );
+        } catch (RuntimeException e) {
+            
+        }
 
         // Inventory service
         InventoryService inventoryService = new InventoryService(allPrintingsDatabaseHandler);

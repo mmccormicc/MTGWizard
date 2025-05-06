@@ -22,7 +22,7 @@ public class AllPrintingsDatabaseHandler {
             connection = DriverManager.getConnection(dbURL, dbUsername, dbPassword);
             System.out.println("Successful SQL Connection.");
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to connect to database", e);
         }
     }
 
@@ -189,7 +189,7 @@ public class AllPrintingsDatabaseHandler {
         // Query has a name but no set
         if (!name.equals("") && set.equals("")) {
             // Querying cards table for card names that contain card name string supplied by the user
-            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid, isFullArt FROM cards WHERE LOWER(name) LIKE ?";
+            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid FROM compressedcards WHERE LOWER(name) LIKE ?";
 
             // Creating prepared statement from query
             preparedStatement = connection.prepareStatement(selectQuery);
@@ -199,7 +199,7 @@ public class AllPrintingsDatabaseHandler {
             // Query has a set but no name
         } else if (name.equals("") && !set.equals("")) {
             // Querying cards table for cards that have given set code
-            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid, isFullArt FROM cards WHERE LOWER(setCode) = ?";
+            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid FROM compressedcards WHERE LOWER(setCode) = ?";
 
             // Creating prepared statement from query
             preparedStatement = connection.prepareStatement(selectQuery);
@@ -210,7 +210,7 @@ public class AllPrintingsDatabaseHandler {
         } else {
             System.out.println("BOTH FOUND");
             // Querying cards table for card names that contain card name string supplied by the user, and match given set code
-            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid, isFullArt FROM cards WHERE LOWER(setCode) = ? AND LOWER(name) LIKE ?";
+            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid FROM compressedcards WHERE LOWER(setCode) = ? AND LOWER(name) LIKE ?";
 
             // Creating prepared statement from query
             preparedStatement = connection.prepareStatement(selectQuery);
@@ -225,7 +225,7 @@ public class AllPrintingsDatabaseHandler {
 
     private String getSetName(Connection connection, String setCode) throws SQLException {
         // SQL query for getting set name from set code
-        String setQuery = "SELECT name FROM sets WHERE code = ?";
+        String setQuery = "SELECT name FROM compressedsets WHERE code = ?";
 
         // Creating prepared statement from query
         PreparedStatement preparedStatement = connection.prepareStatement(setQuery);
@@ -297,7 +297,7 @@ public class AllPrintingsDatabaseHandler {
             try {
 
                 // Looking for first entry where uuid matches
-                String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid FROM cards WHERE uuid = ? LIMIT 1";
+                String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid FROM compressedcards WHERE uuid = ? LIMIT 1";
 
                 // Creating prepared statement from query
                 PreparedStatement preparedStatement = connection.prepareStatement(selectQuery);
