@@ -55,16 +55,28 @@ public class Main extends JFrame {
 
         // Creating handler that queries mtg database
         //AllPrintingsDatabaseHandler allPrintingsDatabaseHandler = new AllPrintingsDatabaseHandler("jdbc:mysql://localhost:3306/mtg", "mtguser", "password");
+
         AllPrintingsDatabaseHandler allPrintingsDatabaseHandler = null;
-        
+        // Running constructor which connects to MySQL server
         try {
+            // Attempt connection to first server
             allPrintingsDatabaseHandler = new AllPrintingsDatabaseHandler(
-                    "jdbc:mysql://gondola.proxy.rlwy.net:39906/mtg ERROR",
+                    "jdbc:mysql://gondola.proxy.rlwy.net:39906/mtg",
                     "readonly",
                     "readonly_password"
             );
         } catch (RuntimeException e) {
-            
+            System.out.println("Couldn't connect to server 1");
+            try {
+                // Attempt connection to back up server
+                allPrintingsDatabaseHandler = new AllPrintingsDatabaseHandler(
+                        "jdbc:mysql://centerbeam.proxy.rlwy.net:37635/mtg",
+                        "readonly_user",
+                        "secure_password"
+                );
+            } catch (RuntimeException e2) {
+                System.out.println("Couldn't connect to server 2");
+            }
         }
 
         // Inventory service
