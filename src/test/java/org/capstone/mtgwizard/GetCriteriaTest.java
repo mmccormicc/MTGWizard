@@ -1,8 +1,14 @@
 package org.capstone.mtgwizard;
 
 import org.capstone.mtgwizard.domain.service.AllPrintingsDatabaseHandler;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.mockito.Mockito;
+
+import static org.mockito.Mockito.*;
 
 public class GetCriteriaTest {
 
@@ -15,6 +21,14 @@ public class GetCriteriaTest {
         // Tags that are searched for in query
         tags = new String[]{"name:", "set:"};
     }
+
+//    @BeforeEach
+//    void setup() {
+//        // Dummy all printings handler
+//        testHandler = mock(AllPrintingsDatabaseHandler.class);
+//        // Tags that are searched for in query
+//        tags = new String[]{"name:", "set:"};
+//    }
 
     @Test
     void testBothTags() {

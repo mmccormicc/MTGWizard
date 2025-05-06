@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    testImplementation("org.mockito:mockito-core:5.11.0")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     implementation("mysql:mysql-connector-java:8.0.33")
