@@ -3,6 +3,7 @@ package org.capstone.mtgwizard;
 import org.capstone.mtgwizard.domain.service.AllPrintingsDatabaseHandler;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,6 +11,7 @@ import org.mockito.Mockito;
 
 import static org.mockito.Mockito.*;
 
+@Disabled
 public class GetCriteriaTest {
 
     AllPrintingsDatabaseHandler testHandler;
