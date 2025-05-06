@@ -27,7 +27,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run unit tests
-        run: ./gradlew test -x test --tests '!org.capstone.mtgwizard.GetCriteriaTest'
+        run: ./gradlew test --tests '*'
 
   build-jar:
     runs-on: ubuntu-latest
