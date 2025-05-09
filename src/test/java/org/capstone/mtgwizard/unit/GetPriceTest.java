@@ -1,4 +1,4 @@
-package org.capstone.mtgwizard;
+package org.capstone.mtgwizard.unit;
 
 import org.capstone.mtgwizard.domain.service.AllPricesDatabaseHandler;
 import org.junit.jupiter.api.*;
@@ -27,7 +27,7 @@ public class GetPriceTest {
     }
 
     @Test
-    void getPrice_NonexistentSeller_ReturnsMinusOne() {
+    void getPrice_EmptySeller_ReturnsMinusOne() {
 
         float cardPrice = priceHandler.getPrice("", "3ef58d1c-993e-5ade-af6a-aa77edb53fd1");
 

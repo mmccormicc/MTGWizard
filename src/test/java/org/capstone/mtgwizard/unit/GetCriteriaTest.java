@@ -1,31 +1,19 @@
-package org.capstone.mtgwizard;
+package org.capstone.mtgwizard.unit;
 
 import org.capstone.mtgwizard.domain.service.AllPrintingsDatabaseHandler;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
-import org.mockito.Mockito;
-
-import static org.mockito.Mockito.*;
 
 public class GetCriteriaTest {
 
     AllPrintingsDatabaseHandler testHandler;
     String[] tags;
 
-//    GetCriteriaTest() {
-//        // Dummy all printings handler
-//        testHandler = new AllPrintingsDatabaseHandler("jdbc:mysql://localhost:3306/mtg", "mtguser", "password");
-//        // Tags that are searched for in query
-//        tags = new String[]{"name:", "set:"};
-//    }
 
     @BeforeEach
     void setup() {
-        // Dummy all printings handler
+        // All printings handler from local MySQL database for faster testing
         testHandler = new AllPrintingsDatabaseHandler("jdbc:mysql://localhost:3306/mtg", "mtguser", "password");
         // Tags that are searched for in query
         tags = new String[]{"name:", "set:"};

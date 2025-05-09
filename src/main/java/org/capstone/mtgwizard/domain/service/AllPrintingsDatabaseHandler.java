@@ -31,6 +31,11 @@ public class AllPrintingsDatabaseHandler {
         // Holds list of cards returned by query
         ArrayList<Card> cardList = new ArrayList<>();
 
+        // Null and empty queries shouldn't return any cards
+        if (query == null || query == "") {
+            return cardList;
+        }
+
         // Setting query to lower case so search isn't case-sensitive
         query = query.toLowerCase();
 
@@ -189,7 +194,7 @@ public class AllPrintingsDatabaseHandler {
         // Query has a name but no set
         if (!name.equals("") && set.equals("")) {
             // Querying cards table for card names that contain card name string supplied by the user
-            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid FROM compressedcards WHERE LOWER(name) LIKE ?";
+            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid FROM compressedcards WHERE LOWER(name) LIKE ? LIMIT 100";
 
             // Creating prepared statement from query
             preparedStatement = connection.prepareStatement(selectQuery);
@@ -199,7 +204,7 @@ public class AllPrintingsDatabaseHandler {
             // Query has a set but no name
         } else if (name.equals("") && !set.equals("")) {
             // Querying cards table for cards that have given set code
-            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid FROM compressedcards WHERE LOWER(setCode) = ?";
+            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid FROM compressedcards WHERE LOWER(setCode) = ? LIMIT 100";
 
             // Creating prepared statement from query
             preparedStatement = connection.prepareStatement(selectQuery);
@@ -210,7 +215,7 @@ public class AllPrintingsDatabaseHandler {
         } else {
             System.out.println("BOTH FOUND");
             // Querying cards table for card names that contain card name string supplied by the user, and match given set code
-            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid FROM compressedcards WHERE LOWER(setCode) = ? AND LOWER(name) LIKE ?";
+            String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid FROM compressedcards WHERE LOWER(setCode) = ? AND LOWER(name) LIKE ? LIMIT 100";
 
             // Creating prepared statement from query
             preparedStatement = connection.prepareStatement(selectQuery);
@@ -292,6 +297,11 @@ public class AllPrintingsDatabaseHandler {
 
         ArrayList<Card> cardList = new ArrayList();
 
+        // Null and empty queries shouldn't return any cards
+        if (uuid == null || uuid == "") {
+            return cardList;
+        }
+
         // Code below uses connection to MySQL
         if (connection != null) {
             try {
@@ -348,12 +358,7 @@ public class AllPrintingsDatabaseHandler {
             // Card does have text
         } else {
             // Replacing text to make it more readable
-            fixedText = fixedText.replace("{T}", "(Tap)");
-//            fixedText = fixedText.replace("{W}", "{White}");
-//            fixedText = fixedText.replace("{U}", "{Blue}");
-//            fixedText = fixedText.replace("{B}", "{Black}");
-//            fixedText = fixedText.replace("{R}", "{Red}");
-//            fixedText = fixedText.replace("{G}", "{Green}");
+            fixedText = fixedText.replace("{T}", "{Tap}");
         }
 
         // Formatting string text to add new lines

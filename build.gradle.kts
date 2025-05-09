@@ -22,8 +22,10 @@ tasks.test {
     maxHeapSize = "1G"
 
     if (System.getenv("CI") == "true") {
+        // These tests rely on local machine databases
         filter {
-            excludeTestsMatching("org.capstone.mtgwizard.GetCriteriaTest")
+            excludeTestsMatching("org.capstone.mtgwizard.unit.GetCriteriaTest")
+            excludeTestsMatching("org.capstone.mtgwizard.integration.QueryDatabaseTest")
         }
     }
 }
