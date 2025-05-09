@@ -132,7 +132,7 @@ public class AllPrintingsDatabaseHandler {
         return cardList;
     }
 
-    // Pulls a string from the query if it is preceded by criteria word such as "name:"
+    // Pulls strings from the query preceded by tags such as "name:"
     public String[] getCriteria(String query, String[] tags) {
 
         // Holds result array of found criteria
@@ -190,9 +190,10 @@ public class AllPrintingsDatabaseHandler {
 
     }
 
+    // Creates an sql statement that returns a list of cards based on supplied name and set criteria
     private PreparedStatement createSqlStatement(Connection connection, String name, String set) throws SQLException {
 
-        PreparedStatement preparedStatement = null;
+        PreparedStatement preparedStatement;
 
         // Query has a name but no set
         if (!name.equals("") && set.equals("")) {
@@ -231,6 +232,7 @@ public class AllPrintingsDatabaseHandler {
         return preparedStatement;
     }
 
+    // This retrieves a full set name when given a 3 letter set code (Ex. SNC gives Streets of New Capenna)
     private String getSetName(Connection connection, String setCode) throws SQLException {
         // SQL query for getting set name from set code
         String setQuery = "SELECT name FROM compressedsets WHERE code = ?";
@@ -256,7 +258,7 @@ public class AllPrintingsDatabaseHandler {
 
     }
 
-    // Recursive function which formats lines of card text to fit UI better by adding new lines
+    // Recursive function which formats lines of card text to fit UI better by adding new line characters
     private String formatText(String text) {
         // Vars used in while loop
         String fixedText = text;
@@ -296,6 +298,7 @@ public class AllPrintingsDatabaseHandler {
         return fixedText;
     }
 
+    // Queries database for a single card matching supplied uuid
     public ArrayList<Card> queryByUuid(String uuid) {
 
         ArrayList<Card> cardList = new ArrayList();
@@ -339,6 +342,7 @@ public class AllPrintingsDatabaseHandler {
         return cardList;
     }
 
+    // Creates a a card using properties found in card database
     private Card createCard(String name, float cardKingdomPrice, float tcgPlayerPrice, String manaCost, String text, String setCode, String type, String uuid) {
 
         // Removing curly braces so mana cost can be read by CardPanel class
@@ -358,7 +362,7 @@ public class AllPrintingsDatabaseHandler {
         // If card doesn't have text
         if (fixedText == null) {
             fixedText = "";
-            // Card does have text
+        // Card does have text
         } else {
             // Replacing text to make it more readable
             fixedText = fixedText.replace("{T}", "{Tap}");
