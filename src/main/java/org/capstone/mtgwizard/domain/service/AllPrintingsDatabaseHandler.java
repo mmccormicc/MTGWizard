@@ -11,6 +11,7 @@ public class AllPrintingsDatabaseHandler {
     private String dbUsername;
     private String dbPassword;
 
+    // Holds connection to MySQL database
     private Connection connection = null;
 
     public AllPrintingsDatabaseHandler(String url, String username, String password) {
@@ -26,12 +27,13 @@ public class AllPrintingsDatabaseHandler {
         }
     }
 
+    // Queries database by what someone would type in the search box
     public ArrayList<Card> queryDatabase(String query) {
 
         // Holds list of cards returned by query
         ArrayList<Card> cardList = new ArrayList<>();
 
-        // Null and empty queries shouldn't return any cards
+        // Null and empty queries won't return any cards
         if (query == null || query == "") {
             return cardList;
         }
@@ -39,7 +41,7 @@ public class AllPrintingsDatabaseHandler {
         // Setting query to lower case so search isn't case-sensitive
         query = query.toLowerCase();
 
-        // Holds search criteria found
+        // Holds search criteria found (Ex. in query 'name:Aragorn set:LTR' criteria are Aragorn and LTR)
         String[] criteria;
 
         // Holds name and set individually
@@ -48,23 +50,22 @@ public class AllPrintingsDatabaseHandler {
 
         // Tags that are searched for in query
         String[] tags = {"name:", "set:"};
-
         // Getting criteria based on tags
         criteria = getCriteria(query, tags);
 
-        // If no name or set criteria is found, set name to whole text entry
+        // If no name or set criteria is found, set name to whole text entry (Ex. 'Aragorn')
         if (criteria[0].equals("") && criteria[1].equals("")) {
             name = query;
         } else {
-            // If a criteria is found, set both to resulting criteria
+            // If a criteria is found, set both to resulting criteria (Ex. 'name:Aragorn set:LTR')
             name = criteria[0];
             set = criteria[1];
         }
 
+        // Code below uses connection to MySQL DB
         if (connection != null) {
-            // Code below uses connection to MySQL
             try {
-
+                // Creating statement given name and set
                 PreparedStatement preparedStatement = createSqlStatement(connection, name, set);
 
                 // Executing query and getting result set
@@ -72,11 +73,11 @@ public class AllPrintingsDatabaseHandler {
 
 
                 // Max number of results to show
-                int maxResults = 100;
+                final int maxResults = 100;
                 // Number of results that will be shown
                 int numResults = 0;
 
-                // Arraylist containing info of cards already seen in result set
+                // Arraylist containing info of cards already seen in result set. This is used to hide duplicate cards.
                 ArrayList<String[]> seenCards = new ArrayList<>();
 
                 // Looping through entire result set
@@ -84,6 +85,7 @@ public class AllPrintingsDatabaseHandler {
 
                     // Creating array representing seen card
                     String[] seenCard = {resultSet.getString("name"), resultSet.getString("setCode")};
+
                     // Boolean if card already found
                     boolean cardSeen = false;
 
@@ -95,6 +97,7 @@ public class AllPrintingsDatabaseHandler {
                             cardSeen = true;
                         }
                     }
+                    
                     // If card hasn't been seen yet
                     if (!cardSeen) {
 

@@ -2,13 +2,23 @@ package org.capstone.mtgwizard.domain.model;
 
 public class Card implements Comparable<Card> {
 
+    // Name of card
     private String name;
+
+    // Price on cardkingdom.com
     private float cardKingdomPrice;
+    // Price on tcgplayer.com
     private float tcgPlayerPrice;
+
+    // Cost of casting a card
     private String manaCost;
+    // Rules text for playing card
     private String rulesText;
+    // Set that card was printed in (Cards in a set share a setting/theme and are released together every few months)
     private String set;
+    // Type of card
     private String type;
+    // Uuid used to identify card in database
     private String uuid;
 
     public Card(String name, float cardKingdomprice, float TCGPlayerprice, String manaCost, String rulesText, String set, String type, String uuid) {
@@ -22,7 +32,7 @@ public class Card implements Comparable<Card> {
         this.uuid = uuid;
     }
 
-    // Adding compare method for sorting
+    // Adding compare method to sort by name
     @Override
     public int compareTo(Card o) {
         return this.name.compareTo(o.name);

@@ -9,9 +9,15 @@ import java.util.Set;
 import java.util.TreeMap;
 
 public class Inventory {
+
+    // This holds a map of cards to their quantity in inventory
+    // It is a tree map so that cards are sorted alphabetically on put method
     private TreeMap<Card, Integer> inventoryEntries = new TreeMap<>();
 
+    // Function to edit inventory based on an inventory file and "add" or "remove" editOption
     public String editByFile(File inventoryFile, AllPrintingsDatabaseHandler allPrintingsDatabaseHandler, String editOption) {
+
+        // This holds the string that is displayed to the user when errors are encountered during the edit by file process
         String errorString = "";
 
         // Catches file not found exceptions
@@ -25,14 +31,14 @@ public class Inventory {
             while ((line = bufferedReader.readLine()) != null) {
 
                 // Splitting into search terms and quantity
+                // Line looks like 'Aragorn 1'
                 String[] entryWords = line.split(" ");
 
                 // If inventory line is not blank
                 if (entryWords.length > 0) {
 
-                    // Gets last word in line
+                    // Gets last word in line (Usually card quantity unless not specified)
                     String lastWord = entryWords[entryWords.length - 1];
-
 
                     // Initializing query as whole line
                     String query = line;
@@ -49,11 +55,9 @@ public class Inventory {
                         query = line.substring(0, line.length() - lastWord.length() - 1);
                         // Line has quantity
                         hasQuantity = true;
-                        System.out.println(query);
                     }
 
-
-                    // If query is a Uuid (No card name is this long without spaces)
+                    // If query is a Uuid (No card name is this length)
                     if (entryWords[0].length() == 36) {
                         foundCards = allPrintingsDatabaseHandler.queryByUuid(query);
                     // Query is not a uuid
@@ -63,7 +67,8 @@ public class Inventory {
                     }
 
                     // If cards were found
-                    if(foundCards.size() >= 1) {
+                    if(!foundCards.isEmpty()) {
+                        // If quantity was specified
                         if (hasQuantity) {
                             if (editOption.equals("add")) {
                                 // Adding card to inventory with quantity specified in file. Only adding first card found.
@@ -116,6 +121,7 @@ public class Inventory {
         return errorString;
     }
 
+    // Tests if string is an integer
     public static boolean isInteger(String str) {
         if (str == null) {
             return false;
@@ -140,7 +146,7 @@ public class Inventory {
             // Read the file line by line
             while ((line = bufferedReader.readLine()) != null) {
 
-                // Spllitting into uuid and quantity
+                // Splitting into uuid and quantity
                 String[] entryWords = line.split(" ");
 
                 // If uuid and quantity are present in line
@@ -166,6 +172,7 @@ public class Inventory {
         }
     }
 
+    // Saving inventory to file
     public void saveInventory(File inventoryFile) {
         // Write to the file
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(inventoryFile, false))) {
@@ -188,7 +195,7 @@ public class Inventory {
     public void add(Card card, int n) {
 
         // Looking for existing card in inventory by UUID
-
+        // Card initially not found
         Card foundCard = null;
         // If there are cards in inventory
         if (inventoryEntries != null) {
@@ -214,7 +221,6 @@ public class Inventory {
     }
 
     // Custom exception for when cards are removed beyond what is in inventory
-    // This is handled when the function is called
     public static class RemoveException extends RuntimeException {
         public RemoveException(String message) {
             super(message);
@@ -225,7 +231,7 @@ public class Inventory {
     public void remove(Card card, int n) {
 
         // Looking for existing card in inventory by UUID
-
+        // Card initially not found
         Card foundCard = null;
         // If there are cards in inventory
         if (inventoryEntries != null) {

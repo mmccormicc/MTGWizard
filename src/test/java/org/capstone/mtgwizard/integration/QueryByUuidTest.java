@@ -1,4 +1,4 @@
-package org.capstone.mtgwizard.integration.integration;
+package org.capstone.mtgwizard.integration;
 
 import org.capstone.mtgwizard.domain.model.Card;
 import org.capstone.mtgwizard.domain.service.AllPrintingsDatabaseHandler;

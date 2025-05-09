@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 public class AllPricesDatabaseHandler {
 
+    // This is the date that price data is from
     private String priceDate = "2025-04-08";
 
     private JSONObject priceData = null;
@@ -31,6 +32,7 @@ public class AllPricesDatabaseHandler {
         }
     }
 
+    // Retrieves price given card uuid and specified seller (tcgplayer or cardkingdom)
     public Float getPrice(String seller, String uuid) {
 
         // Initialized as -1 to signal that price wasn't found
@@ -42,10 +44,10 @@ public class AllPricesDatabaseHandler {
                 JSONObject allPrices = priceData.getJSONObject(uuid);
                 // Getting prices in paper
                 JSONObject paperPrices = allPrices.getJSONObject("paper");
-                // Getting prices from tcgplayer
-                JSONObject tcgPrices = paperPrices.getJSONObject(seller);
+                // Getting prices from specified seller
+                JSONObject sellerPrices = paperPrices.getJSONObject(seller);
                 // Getting retail price
-                JSONObject retailPrice = tcgPrices.getJSONObject("retail");
+                JSONObject retailPrice = sellerPrices.getJSONObject("retail");
                 // Getting normal printing price
                 JSONObject normalPrice = retailPrice.getJSONObject("normal");
                 // Getting price from last date
