@@ -20,21 +20,27 @@ public class InventoryTab extends JPanel {
     // Holds drop down menu and buttons
     private JPanel inventoryEditPanel;
 
+    // Holds help dialogue
     private JDialog helpDialogue;
 
     // Right panel components
     private JPanel rightPanel;
 
+    // Inventory scroll pane vars
     private Box inventoryBox;
     private JScrollPane inventoryScrollPanel;
 
+    // Cards currently being displayed in inventory
     private ArrayList<Card> inventoryCards;
 
+    // Holds tabbed pane
     private JTabbedPane tabbedPane;
+    // Holds search tab
     private SearchTab searchTab;
 
     public InventoryTab(JTabbedPane tabbedPane, SearchTab searchTab, InventoryService inventoryService) {
 
+        // Handles adding and removing cards from inventory, as well as saving and loading inventories
         this.inventoryService = inventoryService;
 
         // Setting tabbed pane so it can be passed
@@ -45,16 +51,20 @@ public class InventoryTab extends JPanel {
         // Setting layout
         setLayout(new BorderLayout());
 
+        /////////////////////
         // LEFT BUTTONS PANEL
-        // This will hold inventory control panel, and a horizontal spacer
+        /////////////////////
+
+        // This holds inventory edit buttons panel, and spacer between scrollable card panel
         leftPanel = new JPanel();
         leftPanel.setLayout(new FlowLayout());
 
+        // This panel holds components to select and edit inventory
         inventoryEditPanel = new JPanel();
         inventoryEditPanel.setLayout(new BoxLayout(inventoryEditPanel, BoxLayout.Y_AXIS));
 
 
-        // Creating dialogue but not displaying it yet
+        // Creating help dialogue but not displaying it yet
         helpDialogue = createHelpDialog();
 
         // Initializing help button
@@ -73,7 +83,8 @@ public class InventoryTab extends JPanel {
         });
         inventoryEditPanel.add(helpButton);
 
-        // Making empty space between help button and label
+
+        // Making empty space between help button and 'Select Inventory' label
         inventoryEditPanel.add(Box.createRigidArea(new Dimension(10, 60)));
 
         // Select inventory label

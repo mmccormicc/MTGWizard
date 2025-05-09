@@ -51,10 +51,11 @@ public class SearchTab extends JPanel {
         searchField = new JTextField("Search for a card",20);
         searchField.setFont(mediumFont);
 
-        // Adding focus listener to remove search prompt when clicked
+        // Adding focus listener to remove search prompt text when clicked
         searchField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
+                // Removing search text
                 if(searchField.getText().equals("Search for a card")) {
                     searchField.setText("");
                 }
@@ -75,8 +76,9 @@ public class SearchTab extends JPanel {
 
             @Override
             public void keyPressed(KeyEvent e) {
+                // Initializing search when enter pressed
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                        performSearch(searchField.getText());
+                        performSearch();
                 }
             }
 
@@ -95,7 +97,7 @@ public class SearchTab extends JPanel {
             // Performing search
             @Override
             public void actionPerformed(ActionEvent e) {
-                performSearch(searchField.getText());
+                performSearch();
             }
         });
 
@@ -149,7 +151,7 @@ public class SearchTab extends JPanel {
         JScrollBar verticalScrollBar = resultScrollPanel.getVerticalScrollBar();
         verticalScrollBar.setUnitIncrement(verticalScrollBar.getUnitIncrement() * 10);
 
-        // Creating result panel
+        // Creating results panel
         resultPanel = new JPanel();
         resultPanel.setLayout(new BorderLayout());
 
@@ -206,7 +208,8 @@ public class SearchTab extends JPanel {
         backPanel.add(backButton);
     }
 
-    public void performSearch(String searchText) {
+    // Search for card that was entered in search box
+    public void performSearch() {
 
         // Querying database from search text
         cardsFound = printingsHandler.queryDatabase(searchField.getText());
@@ -227,7 +230,7 @@ public class SearchTab extends JPanel {
                 // Max result text
                 resultLabel.setText("Showing max of 100 results");
             } else {
-                // Showing number of results
+                // Showing number of results less than 100
                 resultLabel.setText("Results: " + cardsFound.size());
             }
         } else {
@@ -248,20 +251,21 @@ public class SearchTab extends JPanel {
 
         }
 
-        // Updating scrollable pane
+        // Updating scrollable pane now that all result panels added
         resultScrollPanel.updateUI();
 
     }
 
     // Create the JDialog for help window
     private static JDialog createHelpDialog() {
-        JDialog dialog = new JDialog(null, "Search Help", Dialog.ModalityType.MODELESS); // Modeless tells dialogue to not block interactions with other windows
-
+        // Creatine new dialog
+        JDialog dialog = new JDialog(null, "Search Help", Dialog.ModalityType.MODELESS);
+        // Dialog settings
         dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         dialog.setSize(700, 400);
         dialog.setLocationRelativeTo(null);
 
-        // Message to be displayed
+        // Help message to be displayed
         String message = "<html><font face='Arial' size='4' color='black'>" +
                 "Search Option 1: Enter a card name or part of a card name in search box.<br><br>" +
                 "Example - <font color='blue'>sol ring</font><br><br>" +
@@ -278,7 +282,7 @@ public class SearchTab extends JPanel {
         JLabel label = new JLabel(message);
         // Centering label
         label.setHorizontalAlignment(SwingConstants.CENTER);
-
+        // Adding label to dialog
         dialog.add(label);
 
         return dialog;
@@ -289,10 +293,13 @@ public class SearchTab extends JPanel {
         // Removing results
         remove(resultPanel);
 
+        // Retrieving prices of card to display
         card.setCardKingdomPrice(pricesHandler.getPrice("cardkingdom", card.getUuid()));
         card.setTCGPlayerPrice(pricesHandler.getPrice("tcgplayer", card.getUuid()));
+
         // Setting card panel to display info of card
         cardInfoPanel.setCard(card);
+
         // Adding card panel and back button panel to searchTab
         add(cardInfoPanel, BorderLayout.CENTER);
         add(backPanel, BorderLayout.SOUTH);
@@ -300,6 +307,7 @@ public class SearchTab extends JPanel {
         // Now showing card
         showingCard = true;
 
+        // Updating search tab
         updateUI();
     }
 

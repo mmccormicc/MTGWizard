@@ -14,6 +14,8 @@ public class SearchResultPanel extends JPanel {
 
     // Holds card that panel represents
     private Card card;
+
+    // Holds search tab that panel is part of
     SearchTab searchTab;
 
     SearchResultPanel(Card card, SearchTab searchTab) {
@@ -21,8 +23,8 @@ public class SearchResultPanel extends JPanel {
         this.card = card;
         this.searchTab = searchTab;
 
+        // Making border around search result panel
         setBorder(BorderFactory.createLineBorder(Color.black));
-        //resultPane.setLayout(new BoxLayout(resultPane, BoxLayout.Y_AXIS));
 
         // Setting layout
         setLayout(new GridBagLayout());

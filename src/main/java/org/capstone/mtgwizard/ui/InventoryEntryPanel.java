@@ -58,6 +58,7 @@ public class InventoryEntryPanel extends JPanel {
             public void mousePressed(MouseEvent e) {
                 // Sending user to card in search tab
                 tabbedPane.setSelectedIndex(0);
+                // Telling search tab to display info of card clicked on
                 searchTab.displayCardInfo(card);
             }
         });
