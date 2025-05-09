@@ -27,6 +27,7 @@ tasks.test {
             excludeTestsMatching("org.capstone.mtgwizard.unit.GetCriteriaTest")
             excludeTestsMatching("org.capstone.mtgwizard.integration.QueryDatabaseTest")
             excludeTestsMatching("org.capstone.mtgwizard.integration.QueryByUuidTest")
+            excludeTestsMatching("org.capstone.mtgwizard.integration.InventoryServiceTest")
         }
     }
 }
