@@ -271,7 +271,7 @@ public class Inventory {
         inventoryEntries.clear();
     }
 
-    // Returns cards in inventory
+    // Returns unique cards in inventory (Not their quantity)
     public Set<Card> getCards() {
         return inventoryEntries.keySet();
     }
