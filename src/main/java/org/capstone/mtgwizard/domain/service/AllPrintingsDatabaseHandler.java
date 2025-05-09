@@ -217,7 +217,6 @@ public class AllPrintingsDatabaseHandler {
 
             // Query has a set and name
         } else {
-            System.out.println("BOTH FOUND");
             // Querying cards table for card names that contain card name string supplied by the user, and match given set code
             String selectQuery = "SELECT name, manaCost, text, setCode, type, uuid FROM compressedcards WHERE LOWER(setCode) = ? AND LOWER(name) LIKE ? LIMIT 100";
 

@@ -20,7 +20,7 @@ public class GetCriteriaTest {
     }
 
     @Test
-    void testBothTags() {
+    void getCriteria_BothTagsInQuery_ReturnsCorrectCriteria() {
 
         // Dummy query
         String query = "name: Black Lotus set: 2ED";
@@ -35,7 +35,7 @@ public class GetCriteriaTest {
     }
 
     @Test
-    void testOnlyNameTag() {
+    void getCriteria_OnlyNameTagInQuery_ReturnsCorrectCriteria() {
 
         // Dummy query
         String query = "name: Black Lotus";
@@ -50,7 +50,7 @@ public class GetCriteriaTest {
     }
 
     @Test
-    void testOnlySetTag() {
+    void getCriteria_OnlySetTagInQuery_ReturnsCorrectCriteria(){
 
         // Dummy query
         String query = "set: 2ED";
@@ -65,7 +65,7 @@ public class GetCriteriaTest {
     }
 
     @Test
-    void testEmptyQuery() {
+    void getCriteria_EmptyQuery_ReturnsEmptyCriteria() {
 
         // Dummy query
         String query = "";
@@ -80,7 +80,7 @@ public class GetCriteriaTest {
     }
 
     @Test
-    void testEmptyTags() {
+    void getCriteria_EmptyTags_ReturnsEmptyCriteria() {
 
         // Dummy query
         String query = "name:set:";
@@ -95,7 +95,7 @@ public class GetCriteriaTest {
     }
 
     @Test
-    void testLongQuery() {
+    void getCriteria_LongQueryWithBothTags_ReturnsCorrectCriteria() {
 
         // Dummy query
         String query = "name:Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." +
