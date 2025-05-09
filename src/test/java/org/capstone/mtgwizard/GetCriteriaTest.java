@@ -11,26 +11,25 @@ import org.mockito.Mockito;
 
 import static org.mockito.Mockito.*;
 
-@Disabled
 public class GetCriteriaTest {
 
     AllPrintingsDatabaseHandler testHandler;
     String[] tags;
 
-    GetCriteriaTest() {
+//    GetCriteriaTest() {
+//        // Dummy all printings handler
+//        testHandler = new AllPrintingsDatabaseHandler("jdbc:mysql://localhost:3306/mtg", "mtguser", "password");
+//        // Tags that are searched for in query
+//        tags = new String[]{"name:", "set:"};
+//    }
+
+    @BeforeEach
+    void setup() {
         // Dummy all printings handler
         testHandler = new AllPrintingsDatabaseHandler("jdbc:mysql://localhost:3306/mtg", "mtguser", "password");
         // Tags that are searched for in query
         tags = new String[]{"name:", "set:"};
     }
-
-//    @BeforeEach
-//    void setup() {
-//        // Dummy all printings handler
-//        testHandler = mock(AllPrintingsDatabaseHandler.class);
-//        // Tags that are searched for in query
-//        tags = new String[]{"name:", "set:"};
-//    }
 
     @Test
     void testBothTags() {

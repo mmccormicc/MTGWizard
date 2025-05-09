@@ -27,7 +27,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run unit tests
-        run: ./gradlew test --tests '*'
+        run: ./gradlew test
 
   build-jar:
     runs-on: ubuntu-latest

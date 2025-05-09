@@ -19,4 +19,11 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    maxHeapSize = "1G"
+
+    if (System.getenv("CI") == "true") {
+        filter {
+            excludeTestsMatching("org.capstone.mtgwizard.GetCriteriaTest")
+        }
+    }
 }
