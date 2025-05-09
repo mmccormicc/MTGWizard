@@ -30,6 +30,7 @@ public class InventoryService {
         inventories.add(new Inventory());
     }
 
+    // Inventory currently being displayed
     public Inventory selectedInventory = inventories.get(inventorySelectedIndex);
 
     // Holds inventoryFiles
@@ -44,13 +45,13 @@ public class InventoryService {
         String appDataDir = homeDir + File.separator + "MTGWizardData";
         File dataDir = new File(appDataDir);
 
-        // Check if the directory exists, create it if it doesn't
+        // Check if the directory exists, exit if it doesn't
         if (!dataDir.exists()) {
             if (dataDir.mkdirs()) {
                 System.out.println("Successfully created directory: " + dataDir.getAbsolutePath());
             } else {
                 System.err.println("Failed to create directory: " + dataDir.getAbsolutePath());
-                return; // Exit if directory creation fails
+                return;
             }
         }
 
@@ -62,23 +63,34 @@ public class InventoryService {
         inventoryFiles[4] = new File(dataDir, "Inventory5.txt");
     }
 
+    // Setting selected inventory from inventory number
     public void setInventory(int inventoryIndex) {
         inventorySelectedIndex = inventoryIndex;
         selectedInventory = inventories.get(inventorySelectedIndex);
     }
 
+    // Removes all entries from currently selected inventory
+    public void clearCurrentInventory() {
+        selectedInventory.removeAll();
+    }
+
+    // Loading each inventory from inventory files
     public void loadInventories() {
         for (int n = 0; n < inventories.size(); n++) {
+            // Calling loadInventory function from inventory
             inventories.get(n).loadInventory(inventoryFiles[n], allPrintingsDatabaseHandler);
         }
     }
 
+    // Saving each inventory to inventory files
     public void saveInventories() {
         for (int n = 0; n < inventories.size(); n++) {
+            // Calling saveInventory function from inventory
             inventories.get(n).saveInventory(inventoryFiles[n]);
         }
     }
 
+    // Function that runs when user clicks add by file inventory button
     public String addByFile() {
 
         String errorString = "";
@@ -93,6 +105,7 @@ public class InventoryService {
         return errorString;
     }
 
+    // Function that runs when user clicks remove by file inventory button
     public String removeByFile() {
 
         String errorString = "";
@@ -105,12 +118,14 @@ public class InventoryService {
         return errorString;
     }
 
+    // Custom exception for when user selects incorrect file type
     public class FileTypeException extends RuntimeException {
         public FileTypeException(String message) {
             super(message);
         }
     }
 
+    // Prompts user to select file and returns selected file if it is a .txt file
     private File selectTxtFile() throws FileTypeException {
         // Create a file chooser
         JFileChooser fileChooser = new JFileChooser();
@@ -164,10 +179,6 @@ public class InventoryService {
             return extension.equals("txt");
         }
         return false;
-    }
-
-    public void clearCurrentInventory() {
-        selectedInventory.removeAll();
     }
 
 }

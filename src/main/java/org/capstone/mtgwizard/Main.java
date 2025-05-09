@@ -24,9 +24,7 @@ public class Main extends JFrame {
 
     public Main() throws SQLException {
 
-        // Intializing window
-        //Frame this = new JFrame();
-
+        // Exits program when X clicked
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // Setting default size
         this.setSize(1024, 768);
@@ -42,19 +40,21 @@ public class Main extends JFrame {
         // Setting application icons
         this.setIconImage(icon.getImage());
 
-        // Setting background color
+        // Setting frame background color
         this.getContentPane().setBackground(Color.BLACK);
 
 
         // Initializing tabbed pane to hold tabs
         JTabbedPane tabbedPane = new JTabbedPane();
+        // Adding to frame
         this.add(tabbedPane);
 
         // Creating handler that gets prices using a card's UUID
         AllPricesDatabaseHandler allPricesDatabaseHandler = new AllPricesDatabaseHandler("src/main/resources/prices/AllPricesToday.json");
 
-        // Creating handler that queries mtg database
+        // Old handler hosted locally
         //AllPrintingsDatabaseHandler allPrintingsDatabaseHandler = new AllPrintingsDatabaseHandler("jdbc:mysql://localhost:3306/mtg", "mtguser", "password");
+
 
         AllPrintingsDatabaseHandler allPrintingsDatabaseHandler = null;
         // Running constructor which connects to MySQL server
@@ -66,47 +66,43 @@ public class Main extends JFrame {
                     "readonly_password"
             );
         } catch (RuntimeException e) {
-            System.out.println("Couldn't connect to server 1");
+            System.err.println("Error: Couldn't connect to server 1");
             try {
-                // Attempt connection to back up server
+                // Attempt connection to second back up server
                 allPrintingsDatabaseHandler = new AllPrintingsDatabaseHandler(
                         "jdbc:mysql://centerbeam.proxy.rlwy.net:37635/mtg",
                         "readonly_user",
                         "secure_password"
                 );
             } catch (RuntimeException e2) {
-                System.out.println("Couldn't connect to server 2");
+                System.err.println("Error: Couldn't connect to server 2");
             }
         }
 
         // Inventory service
         InventoryService inventoryService = new InventoryService(allPrintingsDatabaseHandler);
-
         // Loading inventories from files
         inventoryService.loadInventories();
 
-        // Initializing search tab with empty arguments
+        // Initializing search tab
         SearchTab searchTab = new SearchTab(allPrintingsDatabaseHandler, allPricesDatabaseHandler, inventoryService);
 
         // Initializing inventory tab, need to pass tabbed pane so tabs can be switched within it
         InventoryTab inventoryTab = new InventoryTab(tabbedPane, searchTab, inventoryService);
-
 
         // Adding search tab to tabbed pane
         tabbedPane.add("Search", searchTab);
         // Adding inventory tab to tabbed pane
         tabbedPane.add("Inventory", inventoryTab);
 
-        // Add the ChangeListener to the JTabbedPane
-        tabbedPane.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                int selectedIndex = tabbedPane.getSelectedIndex();
+        // This runs when a tab is clicked on to change tabs
+        tabbedPane.addChangeListener(e -> {
+            // Getting index of clicked tab
+            int selectedIndex = tabbedPane.getSelectedIndex();
 
-                if (selectedIndex == 1) {
-                    inventoryTab.updateInventory();
-                }
-                // You can add more else-if blocks for additional tabs
+            // Updating inventory with new cards that were added when inventory tab is clicked
+            if (selectedIndex == 1) {
+                inventoryTab.updateInventory();
             }
         });
 
