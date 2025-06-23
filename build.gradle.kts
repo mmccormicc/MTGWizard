@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "org.example"
@@ -15,6 +16,19 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     implementation("mysql:mysql-connector-java:8.0.33")
     implementation("org.json:json:20250107")
+}
+
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "org.capstone.mtgwizard.Main"
+    }
+}
+
+tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+    archiveFileName.set("MTGWizard-all.jar")
+    manifest {
+        attributes["Main-Class"] = "org.capstone.mtgwizard.Main"
+    }
 }
 
 tasks.test {
