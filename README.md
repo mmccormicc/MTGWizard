@@ -1,4 +1,4 @@
-Run src/main/java/org/capstone/mtgwizard/Main.java to launch MTGWizard. The project requires at least JDK 17.
+Run src/main/java/org/capstone/mtgwizard/Main.java or MTGWizard.exe to launch MTGWizard. The project requires at least JDK 17.
 
 MTGWizard is a database interface software for browsing and managing inventories of Magic trading cards.
 
