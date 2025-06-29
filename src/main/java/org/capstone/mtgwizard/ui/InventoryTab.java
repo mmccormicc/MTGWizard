@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static org.capstone.mtgwizard.ui.ProgramFonts.*;
@@ -37,6 +38,8 @@ public class InventoryTab extends JPanel {
     private JTabbedPane tabbedPane;
     // Holds search tab
     private SearchTab searchTab;
+
+    private JComboBox<String> inventorySelect;
 
     public InventoryTab(JTabbedPane tabbedPane, SearchTab searchTab, InventoryService inventoryService) {
 
@@ -87,6 +90,7 @@ public class InventoryTab extends JPanel {
         // Making empty space between help button and 'Select Inventory' label
         inventoryEditPanel.add(Box.createRigidArea(new Dimension(10, 60)));
 
+
         // Select inventory label
         JLabel selectInventoryLabel = new JLabel("Select Inventory");
         selectInventoryLabel.setFont(mediumFont);
@@ -96,27 +100,89 @@ public class InventoryTab extends JPanel {
         // Making empty space between label and menu
         inventoryEditPanel.add(Box.createRigidArea(new Dimension(10, 5)));
 
-
-        // Drop down menu with inventory options
-        String[] inventoryOptions = {"Inventory 1", "Inventory 2", "Inventory 3", "Inventory 4", "Inventory 5"};
-        JComboBox inventorySelect = new JComboBox(inventoryOptions);
+        // Drop down menu with inventory options (now populated dynamically)
+        inventorySelect = new JComboBox<>(inventoryService.getInventoryNames());
         inventorySelect.setFont(mediumFont);
         inventorySelect.setAlignmentX(Component.CENTER_ALIGNMENT);
         inventorySelect.setMaximumSize(new Dimension(200, 50));
+        // Set initial selection
+        inventorySelect.setSelectedIndex(inventoryService.inventorySelectedIndex);
         // Action listener when option is chosen
         inventorySelect.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {;
+            public void actionPerformed(ActionEvent e) {
                 // Updating inventory number to selection
-                inventoryService.setInventory(inventorySelect.getSelectedIndex());
+                int selectedIndex = inventorySelect.getSelectedIndex();
+                inventoryService.setInventory(selectedIndex);
                 updateInventory();
             }
         });
         inventoryEditPanel.add(inventorySelect);
 
-        // Making empty space drop down menu and buttons
-        inventoryEditPanel.add(Box.createRigidArea(new Dimension(10, 50)));
+        // Making empty space between inventory dropdown and create inventory button
+        inventoryEditPanel.add(Box.createRigidArea(new Dimension(10, 5)));
 
+        // Create Inventory button
+        JButton createInventoryButton = new JButton("Create Inventory");
+        createInventoryButton.setFont(mediumFont);
+        createInventoryButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        createInventoryButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Prompt for inventory name
+                String inventoryName = JOptionPane.showInputDialog(
+                        null,
+                        "Enter a name for the new inventory:",
+                        "Create New Inventory",
+                        JOptionPane.PLAIN_MESSAGE
+                );
+
+                if (inventoryName != null && !inventoryName.trim().isEmpty()) {
+                    try {
+
+                        int oldIndex = inventoryService.inventorySelectedIndex;
+
+                        // Create the new inventory
+                        int newIndex = inventoryService.createNewInventory(
+                                inventoryName,
+                                inventoryService.getDataDirectory()
+                        );
+
+                        //  If new inventory was actually created
+                        if (newIndex != oldIndex) {
+                            // Update the combo box
+                            inventorySelect.addItem(inventoryName);
+                            // Select the new inventory
+                            inventorySelect.setSelectedIndex(newIndex);
+                            // Update service and UI
+                            inventoryService.setInventory(newIndex);
+                            updateInventory();
+                            // Save changes
+                            inventoryService.saveInventories();
+                        }
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Error creating inventory: " + ex.getMessage(),
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    }
+                } else {
+                    // Error message for creating inventory with empty name
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Error creating inventory: Inventory name can't be empty.",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            }
+        });
+        inventoryEditPanel.add(createInventoryButton);
+
+        // Making empty space between buttons and next section
+        inventoryEditPanel.add(Box.createRigidArea(new Dimension(10, 20)));
 
 
         // Mass entry label
@@ -244,6 +310,10 @@ public class InventoryTab extends JPanel {
         });
         inventoryEditPanel.add(clearInventoryButton);
 
+
+
+
+
         // Adding inventory edit panel
         leftPanel.add(inventoryEditPanel);
         // Adding horizontal spacer
@@ -310,7 +380,9 @@ public class InventoryTab extends JPanel {
                 "This is useful for creating decks, or cataloging store inventory.<br><br>" +
 
                 "<font color='blue'>Select Inventory</font><br>" +
-                "Select the inventory you want to edit from the drop down menu.<br><br>" +
+                "This section lets you choose between saved inventories, and create new ones.<br>" +
+                "Select the inventory you want to edit from the drop down menu.<br>" +
+                "Create new inventories with custom names with the 'Create Inventory' button.<br><br>" +
 
                 "<font color='blue'>Edit Inventory</font><br>" +
                 "These buttons allow you to mass edit inventories by uploading files.<br>" +

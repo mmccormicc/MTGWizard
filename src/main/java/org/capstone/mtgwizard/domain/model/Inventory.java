@@ -4,15 +4,35 @@ import org.capstone.mtgwizard.domain.service.AllPrintingsDatabaseHandler;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeMap;
 
 public class Inventory {
 
+    private String name;
+
     // This holds a map of cards to their quantity in inventory
     // It is a tree map so that cards are sorted alphabetically on put method
     private TreeMap<Card, Integer> inventoryEntries = new TreeMap<>();
+
+    // Updated constructor to accept name
+    public Inventory(String name) {
+        this.name = name;
+    }
+
+    // Default constructor for backward compatibility
+    public Inventory() {
+        this.name = "Unnamed Inventory";
+    }
+
+    // Getter and setter for name
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     // Function to edit inventory based on an inventory file and "add" or "remove" editOption
     public String editByFile(File inventoryFile, AllPrintingsDatabaseHandler allPrintingsDatabaseHandler, String editOption) {
@@ -60,7 +80,7 @@ public class Inventory {
                     // If query is a Uuid (No card name is this length)
                     if (entryWords[0].length() == 36) {
                         foundCards = allPrintingsDatabaseHandler.queryByUuid(query);
-                    // Query is not a uuid
+                        // Query is not a uuid
                     } else {
                         //  Querying database
                         foundCards = allPrintingsDatabaseHandler.queryDatabase(query);
@@ -97,7 +117,7 @@ public class Inventory {
                                 }
                             }
                         }
-                    // Card was not found by query
+                        // Card was not found by query
                     } else {
                         // If line isn't blank
                         if (!query.equals("")) {
@@ -253,7 +273,7 @@ public class Inventory {
                 inventoryEntries.remove(foundCard);
                 // Throw overdraw error
                 throw new RemoveException("Removed more cards than are in inventory.");
-            // Removing all cards from inventory exactly
+                // Removing all cards from inventory exactly
             } else if (inventoryEntries.get(foundCard) == n) {
                 // Remove card and quantity from inventor
                 inventoryEntries.remove(foundCard);
@@ -261,7 +281,7 @@ public class Inventory {
                 // Reduce card by specified quantity
                 inventoryEntries.put(foundCard, inventoryEntries.get(foundCard) - n);
             }
-        // Card not in inventory
+            // Card not in inventory
         } else {
             throw new RemoveException("No cards left in inventory.");
         }

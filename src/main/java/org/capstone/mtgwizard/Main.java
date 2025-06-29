@@ -81,8 +81,6 @@ public class Main extends JFrame {
 
         // Inventory service
         InventoryService inventoryService = new InventoryService(allPrintingsDatabaseHandler);
-        // Loading inventories from files
-        inventoryService.loadInventories();
 
         // Initializing search tab
         SearchTab searchTab = new SearchTab(allPrintingsDatabaseHandler, allPricesDatabaseHandler, inventoryService);

@@ -4,40 +4,24 @@ import org.capstone.mtgwizard.domain.model.Inventory;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 public class InventoryService {
 
     AllPrintingsDatabaseHandler allPrintingsDatabaseHandler;
 
-    // Holds currently selected inventory
+    // Holds inventories and their corresponding files
+    private List<Inventory> inventories = new ArrayList<>();
+    private List<File> inventoryFiles = new ArrayList<>();
+
+    // Holds currently selected inventory index
     public int inventorySelectedIndex = 0;
-
-    // Holds inventories
-    ArrayList<Inventory> inventories;
-    {
-        inventories = new ArrayList<>();
-        inventories.add(new Inventory());
-        inventories.add(new Inventory());
-        inventories.add(new Inventory());
-        inventories.add(new Inventory());
-        inventories.add(new Inventory());
-    }
-
-    // Inventory currently being displayed
-    public Inventory selectedInventory = inventories.get(inventorySelectedIndex);
-
-    // Holds inventoryFiles
-    File[] inventoryFiles = new File[5];
+    public Inventory selectedInventory;
 
     public InventoryService(AllPrintingsDatabaseHandler allPrintingsDatabaseHandler) {
-
         this.allPrintingsDatabaseHandler = allPrintingsDatabaseHandler;
 
         // Creating directory in user files to store inventories
@@ -45,7 +29,7 @@ public class InventoryService {
         String appDataDir = homeDir + File.separator + "MTGWizardData";
         File dataDir = new File(appDataDir);
 
-        // Check if the directory exists, exit if it doesn't
+        // Check if the directory exists, create if it doesn't
         if (!dataDir.exists()) {
             if (dataDir.mkdirs()) {
                 System.out.println("Successfully created directory: " + dataDir.getAbsolutePath());
@@ -55,38 +39,123 @@ public class InventoryService {
             }
         }
 
-        // Creating inventory files
-        inventoryFiles[0] = new File(dataDir, "Inventory1.txt");
-        inventoryFiles[1] = new File(dataDir, "Inventory2.txt");
-        inventoryFiles[2] = new File(dataDir, "Inventory3.txt");
-        inventoryFiles[3] = new File(dataDir, "Inventory4.txt");
-        inventoryFiles[4] = new File(dataDir, "Inventory5.txt");
+        // Load all existing inventory files
+        loadAllInventories(dataDir);
+
+        // If no inventories exist, create initial ones
+        if (inventories.size() < 5) {
+            createInitialInventories(dataDir);
+        }
+
+        // Set initial selected inventory
+        if (!inventories.isEmpty()) {
+            selectedInventory = inventories.get(0);
+        }
     }
 
-    // Setting selected inventory from inventory number
+    // Load all .txt files from the data directory as inventories
+    private void loadAllInventories(File dataDir) {
+        File[] files = dataDir.listFiles((dir, name) -> name.endsWith(".txt"));
+        if (files != null) {
+            for (File file : files) {
+                Inventory inventory = new Inventory();
+                // Set name based on file name (remove .txt extension)
+                String name = file.getName().substring(0, file.getName().length() - 4);
+                inventory.setName(name);
+                inventory.loadInventory(file, allPrintingsDatabaseHandler);
+                inventories.add(inventory);
+                inventoryFiles.add(file);
+            }
+        }
+    }
+
+    // Create initial 5 inventories if none exist
+    private void createInitialInventories(File dataDir) {
+        for (int i = 1; i <= 5; i++) {
+
+            String name = "Inventory " + i;
+            // Sanitize and construct the expected file
+            String sanitized = name.replaceAll("[<>:\"/\\|?*]", "_");
+            File expectedFile = new File(dataDir, sanitized + ".txt");
+
+            // If file name already exists, don't create new file
+            if (!expectedFile.exists()) {
+                Inventory inventory = new Inventory(name);
+                inventories.add(inventory);
+                inventoryFiles.add(expectedFile);
+                inventory.saveInventory(expectedFile);
+                System.out.println("Created missing inventory: " + name);
+            }
+        }
+    }
+
+    // Create a new inventory with the given name
+    public int createNewInventory(String name, File dataDir) throws IOException {
+        // Create a unique file for the inventory
+        File file = createUniqueFile(dataDir, name);
+        if (file != null) {
+            Inventory inventory = new Inventory(name);
+            inventories.add(inventory);
+            inventoryFiles.add(file);
+            // Save empty inventory to file
+            inventory.saveInventory(file);
+            // Return the index of the new inventory
+            return inventories.size() - 1;
+        }
+        return inventorySelectedIndex;
+    }
+
+    // Helper to create a unique file (appends number if name exists)
+    private File createUniqueFile(File dataDir, String baseName) throws IOException {
+        // Sanitize name: replace invalid file characters
+        String sanitized = baseName.replaceAll("[<>:\"/\\|?*]", "_");
+        File file = new File(dataDir, sanitized + ".txt");
+
+        // If inventory file already exists, don't create inventory
+        if (file.exists()) {
+            throw new IOException("Inventory already exists");
+        } else if (file.createNewFile()) {
+            System.out.println("Created new inventory file: " + file.getAbsolutePath());
+            return file;
+        }
+
+        return null;
+    }
+
+    // Get the data directory
+    public File getDataDirectory() {
+        String homeDir = System.getProperty("user.home");
+        return new File(homeDir + File.separator + "MTGWizardData");
+    }
+
+    // Get list of inventory names for UI
+    public String[] getInventoryNames() {
+        String[] names = new String[inventories.size()];
+        for (int i = 0; i < inventories.size(); i++) {
+            names[i] = inventories.get(i).getName();
+        }
+        return names;
+    }
+
+    // Setting selected inventory from index
     public void setInventory(int inventoryIndex) {
-        inventorySelectedIndex = inventoryIndex;
-        selectedInventory = inventories.get(inventorySelectedIndex);
+        if (inventoryIndex >= 0 && inventoryIndex < inventories.size()) {
+            inventorySelectedIndex = inventoryIndex;
+            selectedInventory = inventories.get(inventoryIndex);
+        }
     }
 
     // Removes all entries from currently selected inventory
     public void clearCurrentInventory() {
-        selectedInventory.removeAll();
-    }
-
-    // Loading each inventory from inventory files
-    public void loadInventories() {
-        for (int n = 0; n < inventories.size(); n++) {
-            // Calling loadInventory function from inventory
-            inventories.get(n).loadInventory(inventoryFiles[n], allPrintingsDatabaseHandler);
+        if (selectedInventory != null) {
+            selectedInventory.removeAll();
         }
     }
 
-    // Saving each inventory to inventory files
+    // Saving all inventories to their files
     public void saveInventories() {
-        for (int n = 0; n < inventories.size(); n++) {
-            // Calling saveInventory function from inventory
-            inventories.get(n).saveInventory(inventoryFiles[n]);
+        for (int i = 0; i < inventories.size(); i++) {
+            inventories.get(i).saveInventory(inventoryFiles.get(i));
         }
     }
 
